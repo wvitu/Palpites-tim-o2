@@ -1,0 +1,108 @@
+.palpites-section {
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  text-align: center;
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.palpites-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .palpites-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.palpite-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 12px;
+}
+
+.palpite-block {
+  margin-bottom: 16px;
+}
+
+.palpite-block label {
+  display: block;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.placar-input {
+  display: flex;
+  align-items: center;
+}
+
+.placar-input input {
+  width: 60px;
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.placar-input input:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.placar-input input:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.placar-input span {
+  background-color: #e0e0e0;
+  padding: 8px 12px;
+  font-weight: bold;
+}
+
+.btn-salvar {
+  width: 100%;
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.btn-salvar:hover {
+  background-color: #222;
+}

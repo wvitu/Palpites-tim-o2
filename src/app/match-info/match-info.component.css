@@ -1,0 +1,92 @@
+.match-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 800px;
+  margin: 40px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.match-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-logo {
+  height: 48px;
+  width: 48px;
+  object-fit: contain;
+}
+
+.team-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.vs-text {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.opponent-input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  min-width: 150px;
+}
+
+.info-input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  min-width: 250px;
+}
+
+.ok-button {
+  padding: 8px 16px;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ok-button:hover {
+  background-color: #ccc;
+}
+
+.update-button {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.update-button button {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.update-button button:hover {
+  background-color: #222;
+}
