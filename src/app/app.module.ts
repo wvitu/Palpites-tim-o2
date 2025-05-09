@@ -8,6 +8,7 @@ import { MatchInfoComponent } from './match-info/match-info.component';
 import { PalpitesComponent } from './palpites/palpites.component';
 import { ResultadoFinalComponent } from './resultado-final/resultado-final.component';
 import { ClassificacaoComponent } from './classificacao/classificacao.component';
+import { RodapeComponent } from './rodape/rodape.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ClassificacaoComponent } from './classificacao/classificacao.component'
     MatchInfoComponent,
     PalpitesComponent,
     ResultadoFinalComponent,
-    ClassificacaoComponent
+    ClassificacaoComponent,
+    RodapeComponent
   ],
   imports: [
     BrowserModule,
