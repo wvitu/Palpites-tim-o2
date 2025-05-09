@@ -7,6 +7,7 @@ import { HeaderComponent } from './header/header.component';
 import { MatchInfoComponent } from './match-info/match-info.component';
 import { PalpitesComponent } from './palpites/palpites.component';
 import { ResultadoFinalComponent } from './resultado-final/resultado-final.component';
+import { ClassificacaoComponent } from './classificacao/classificacao.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { ResultadoFinalComponent } from './resultado-final/resultado-final.compo
     HeaderComponent,
     MatchInfoComponent,
     PalpitesComponent,
-    ResultadoFinalComponent
+    ResultadoFinalComponent,
+    ClassificacaoComponent
   ],
   imports: [
     BrowserModule,

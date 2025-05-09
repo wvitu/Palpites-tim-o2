@@ -1,0 +1,49 @@
+.ranking-section {
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.ranking-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ranking-table th {
+  background-color: #f0f0f0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-align: left;
+  padding: 12px;
+  border-bottom: 2px solid #ccc;
+  text-transform: uppercase;
+}
+
+.ranking-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.ranking-table .nome {
+  font-weight: bold;
+}
