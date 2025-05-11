@@ -28,8 +28,8 @@
     <button (click)="atualizarInformacoes()">Atualizar Informações do Jogo</button>
   </div>
 
-  <div class="match-row" style="margin-top: 16px;">
-    <input type="text" placeholder="Nome do Palpiteiro" [(ngModel)]="novoPalpiteiro" class="info-input" />
-    <button (click)="adicionar()" class="ok-button">Adicionar Palpiteiro</button>
+  <div class="update-button">
+    <input type="text" placeholder="Nome do palpiteiro" [(ngModel)]="novoPalpiteiro" class="info-input" />
+    <button (click)="emitirPalpiteiro()">Adicionar Palpiteiro</button>
   </div>
 </div>

@@ -6,28 +6,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent {
-  adversario = '';
-  dataHora = '';
-  local = '';
+  adversario: string = '';
+  dataHora: string = '';
+  local: string = '';
   palpiteiros: string[] = [];
 
-  onJogoAtualizado(dados: { adversario: string; dataHora: string; local: string }) {
-    this.adversario = dados.adversario;
-    this.dataHora = dados.dataHora;
-    this.local = dados.local;
+  atualizarJogo(info: { adversario: string, dataHora: string, local: string }) {
+    this.adversario = info.adversario;
+    this.dataHora = info.dataHora;
+    this.local = info.local;
   }
 
   adicionarPalpiteiro(nome: string) {
-    if (!nome.trim()) return;
-    if (this.palpiteiros.includes(nome)) {
-      alert('Palpiteiro já adicionado!');
-      return;
+    if (nome && !this.palpiteiros.includes(nome)) {
+      this.palpiteiros = [...this.palpiteiros, nome]; // Garante nova referência
     }
-    if (this.palpiteiros.length >= 10) {
-      alert('Limite de 10 palpiteiros atingido.');
-      return;
-    }
-    this.palpiteiros.push(nome.trim());
-
   }
 }

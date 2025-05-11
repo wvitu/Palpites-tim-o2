@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-palpites',
@@ -11,39 +11,30 @@ export class PalpitesComponent implements OnChanges {
   @Input() local: string = '';
   @Input() palpiteiros: string[] = [];
 
-  palpites: Record<string, {
-    torcedor: { casa: string; visitante: string };
-    realista: { casa: string; visitante: string };
-  }> = {};
+  palpites: any = {};
+  mensagensErro: any = {};
+  mensagensSucesso: any = {};
 
-  mensagensErro: Record<string, string> = {};
-  mensagensSucesso: Record<string, string> = {};
-
-  trackByNome(index: number, item: string): string {
-    return item;
-  }
-
-
-  ngOnChanges(): void {
-    for (const nome of this.palpiteiros) {
-      if (!this.palpites[nome]) {
-        this.palpites[nome] = {
-          torcedor: { casa: '', visitante: '' },
-          realista: { casa: '', visitante: '' }
-        };
-        this.mensagensErro[nome] = '';
-        this.mensagensSucesso[nome] = '';
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['palpiteiros'] && changes['palpiteiros'].currentValue) {
+      for (const nome of this.palpiteiros) {
+        if (!this.palpites[nome]) {
+          this.palpites[nome] = {
+            torcedor: { casa: '', visitante: '' },
+            realista: { casa: '', visitante: '' }
+          };
+          this.mensagensErro[nome] = '';
+          this.mensagensSucesso[nome] = '';
+        }
       }
     }
   }
 
   salvarPalpites(nome: string) {
     const p = this.palpites[nome];
-    if (
-      p.torcedor.casa === '' || p.torcedor.visitante === '' ||
-      p.realista.casa === '' || p.realista.visitante === ''
-    ) {
-      this.mensagensErro[nome] = 'Preencha todos os campos dos palpites.';
+    if (p.torcedor.casa === '' || p.torcedor.visitante === '' ||
+        p.realista.casa === '' || p.realista.visitante === '') {
+      this.mensagensErro[nome] = 'Preencha todos os campos antes de salvar.';
       this.mensagensSucesso[nome] = '';
       return;
     }
