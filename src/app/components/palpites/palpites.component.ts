@@ -19,6 +19,11 @@ export class PalpitesComponent implements OnChanges {
   mensagensErro: Record<string, string> = {};
   mensagensSucesso: Record<string, string> = {};
 
+  trackByNome(index: number, item: string): string {
+    return item;
+  }
+
+
   ngOnChanges(): void {
     for (const nome of this.palpiteiros) {
       if (!this.palpites[nome]) {
@@ -32,19 +37,18 @@ export class PalpitesComponent implements OnChanges {
     }
   }
 
-  salvarPalpites(usuario: string, tipo: 'torcedor' | 'realista', casa: string, visitante: string) {
-    if (casa === '' || visitante === '') {
-      this.mensagensErro[usuario] = `Preencha todos os campos do palpite ${tipo}`;
-      this.mensagensSucesso[usuario] = '';
+  salvarPalpites(nome: string) {
+    const p = this.palpites[nome];
+    if (
+      p.torcedor.casa === '' || p.torcedor.visitante === '' ||
+      p.realista.casa === '' || p.realista.visitante === ''
+    ) {
+      this.mensagensErro[nome] = 'Preencha todos os campos dos palpites.';
+      this.mensagensSucesso[nome] = '';
       return;
     }
 
-    this.palpites[usuario][tipo] = { casa, visitante };
-    this.mensagensErro[usuario] = '';
-
-    const p = this.palpites[usuario];
-    if (p.torcedor.casa && p.torcedor.visitante && p.realista.casa && p.realista.visitante) {
-      this.mensagensSucesso[usuario] = 'Palpites salvos com sucesso!';
-    }
+    this.mensagensErro[nome] = '';
+    this.mensagensSucesso[nome] = 'Palpites salvos com sucesso!';
   }
 }
