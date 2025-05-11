@@ -1,17 +1,16 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-classificacao',
   templateUrl: './classificacao-card.component.html',
   styleUrls: ['./classificacao-card.component.css']
 })
-export class ClassificacaoComponent implements OnChanges {
-  @Input() pontuacoes: { [nome: string]: number } = {};
-  ranking: { nome: string; pontos: number }[] = [];
+export class ClassificacaoComponent {
+  @Input() classificacao: { nome: string; pontos: number; acertos: number }[] = [];
 
-  ngOnChanges(): void {
-    this.ranking = Object.entries(this.pontuacoes)
-      .map(([nome, pontos]) => ({ nome, pontos }))
-      .sort((a, b) => b.pontos - a.pontos);
+  get classificacaoOrdenada() {
+    return this.classificacao
+      .slice()
+      .sort((a, b) => b.pontos - a.pontos || b.acertos - a.acertos);
   }
 }

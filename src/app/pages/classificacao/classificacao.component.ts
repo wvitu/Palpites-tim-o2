@@ -5,4 +5,6 @@ import { Component } from '@angular/core';
   templateUrl: './classificacao.component.html',
   styleUrls: ['./classificacao-card.component.css']
 })
-export class ClassificacaoPageComponent {}
+export class ClassificacaoPageComponent {
+  classificacao: { nome: string; pontos: number; acertos: number }[] = [];
+}
