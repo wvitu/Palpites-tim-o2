@@ -44,6 +44,14 @@
                  salvarPalpites('vitor', 'realista', vitorRealistaCasa.value, vitorRealistaVisitante.value)">
         Salvar Palpites
       </button>
+
+      <div *ngIf="mensagensErro['vitor']" class="msg-erro">
+        {{ mensagensErro['vitor'] }}
+      </div>
+
+      <div *ngIf="mensagensSucesso['vitor']" class="msg-sucesso">
+        {{ mensagensSucesso['vitor'] }}
+      </div>
     </div>
 
     <!-- Matheus -->
@@ -87,6 +95,14 @@
                  salvarPalpites('matheus', 'realista', matheusRealistaCasa.value, matheusRealistaVisitante.value)">
         Salvar Palpites
       </button>
+
+      <div *ngIf="mensagensErro['matheus']" class="msg-erro">
+        {{ mensagensErro['matheus'] }}
+      </div>
+
+      <div *ngIf="mensagensSucesso['matheus']" class="msg-sucesso">
+        {{ mensagensSucesso['matheus'] }}
+      </div>
     </div>
 
   </div>

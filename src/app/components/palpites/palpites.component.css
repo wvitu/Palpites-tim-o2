@@ -106,3 +106,48 @@
 .btn-salvar:hover {
   background-color: #222;
 }
+
+.msg-erro {
+  color: red;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+.msg-sucesso {
+  color: green;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+.palpites-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch; /* <- força altura igual */
+}
+
+.palpite-card {
+  background-color: #ffffffc9;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .palpites-grid {
+    flex-wrap: nowrap;
+  }
+
+  .palpite-card {
+    flex: 1 1 0;
+  }
+}
+
