@@ -1,13 +1,17 @@
 <section class="resultado-section">
-  <h2 class="section-title">Resultado Final</h2>
+  <h2 class="section-title">Verificar o Resultado do Jogo</h2>
 
   <div class="resultado-input">
-    <input type="number" min="0" placeholder="0" />
+    <input type="number" min="0" [(ngModel)]="resultadoCasa" placeholder="0" />
     <span>x</span>
-    <input type="number" min="0" placeholder="0" />
+    <input type="number" min="0" [(ngModel)]="resultadoVisitante" placeholder="0" />
   </div>
 
   <div class="resultado-btn">
-    <button>Registrar Resultado Final</button>
+    <button (click)="verificarResultado()">Verificar Resultado do Jogo</button>
+  </div>
+
+  <div *ngFor="let msg of mensagensAcerto" class="msg-sucesso">
+    {{ msg }}
   </div>
 </section>
