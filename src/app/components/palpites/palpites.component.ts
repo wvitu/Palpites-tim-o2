@@ -11,9 +11,13 @@ export class PalpitesComponent implements OnChanges {
   @Input() local: string = '';
   @Input() palpiteiros: string[] = [];
 
-  palpites: any = {};
-  mensagensErro: any = {};
-  mensagensSucesso: any = {};
+  palpites: Record<string, {
+    torcedor: { casa: string; visitante: string };
+    realista: { casa: string; visitante: string };
+  }> = {};
+
+  mensagensErro: Record<string, string> = {};
+  mensagensSucesso: Record<string, string> = {};
 
   ngOnChanges(): void {
     for (const nome of this.palpiteiros) {

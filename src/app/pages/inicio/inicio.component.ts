@@ -18,8 +18,16 @@ export class InicioComponent {
   }
 
   adicionarPalpiteiro(nome: string) {
-    if (nome && !this.palpiteiros.includes(nome)) {
-      this.palpiteiros.push(nome);
+    if (!nome.trim()) return;
+    if (this.palpiteiros.includes(nome)) {
+      alert('Palpiteiro já adicionado!');
+      return;
     }
+    if (this.palpiteiros.length >= 10) {
+      alert('Limite de 10 palpiteiros atingido.');
+      return;
+    }
+    this.palpiteiros.push(nome.trim());
+
   }
 }

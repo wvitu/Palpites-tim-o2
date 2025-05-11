@@ -2,12 +2,10 @@
   <h2 class="section-title">Palpites da Rodada</h2>
 
   <div class="palpites-grid">
-
-    <!-- Vitor -->
-    <div class="palpite-card">
+    <div class="palpite-card" *ngFor="let nome of palpiteiros">
       <div class="card-header">
-        <div class="avatar">V</div>
-        <h3 class="user-name">Vitor</h3>
+        <div class="avatar">{{ nome[0] }}</div>
+        <h3 class="user-name">{{ nome }}</h3>
       </div>
 
       <div class="palpite-block">
@@ -18,92 +16,35 @@
       <div class="palpite-block">
         <label>Palpite Torcedor</label>
         <div class="placar-input">
-          <input type="number" min="0" #vitorTorcedorCasa placeholder="0" />
+          <input type="number" min="0" #torCasa />
           <span>x</span>
-          <input type="number" min="0" #vitorTorcedorVisitante placeholder="0" />
+          <input type="number" min="0" #torVisit />
         </div>
-        <div *ngIf="palpites.vitor.torcedor.casa !== ''">
-          <small>Salvo: {{ palpites.vitor.torcedor.casa }} x {{ palpites.vitor.torcedor.visitante }}</small>
+        <div *ngIf="palpites[nome] && palpites[nome].torcedor.casa !== ''">
+          <small>Salvo: {{ palpites[nome].torcedor.casa }} x {{ palpites[nome].torcedor.visitante }}</small>
         </div>
       </div>
 
       <div class="palpite-block">
         <label>Palpite Realista</label>
         <div class="placar-input">
-          <input type="number" min="0" #vitorRealistaCasa placeholder="0" />
+          <input type="number" min="0" #realCasa />
           <span>x</span>
-          <input type="number" min="0" #vitorRealistaVisitante placeholder="0" />
+          <input type="number" min="0" #realVisit />
         </div>
-        <div *ngIf="palpites.vitor.realista.casa !== ''">
-          <small>Salvo: {{ palpites.vitor.realista.casa }} x {{ palpites.vitor.realista.visitante }}</small>
+        <div *ngIf="palpites[nome] && palpites[nome].realista.casa !== ''">
+          <small>Salvo: {{ palpites[nome].realista.casa }} x {{ palpites[nome].realista.visitante }}</small>
         </div>
       </div>
 
       <button class="btn-salvar"
-        (click)="salvarPalpites('vitor', 'torcedor', vitorTorcedorCasa.value, vitorTorcedorVisitante.value);
-                 salvarPalpites('vitor', 'realista', vitorRealistaCasa.value, vitorRealistaVisitante.value)">
+        (click)="salvarPalpites(nome, 'torcedor', torCasa.value, torVisit.value);
+                 salvarPalpites(nome, 'realista', realCasa.value, realVisit.value)">
         Salvar Palpites
       </button>
 
-      <div *ngIf="mensagensErro['vitor']" class="msg-erro">
-        {{ mensagensErro['vitor'] }}
-      </div>
-
-      <div *ngIf="mensagensSucesso['vitor']" class="msg-sucesso">
-        {{ mensagensSucesso['vitor'] }}
-      </div>
+      <div *ngIf="mensagensErro[nome]" class="msg-erro">{{ mensagensErro[nome] }}</div>
+      <div *ngIf="mensagensSucesso[nome]" class="msg-sucesso">{{ mensagensSucesso[nome] }}</div>
     </div>
-
-    <!-- Matheus -->
-    <div class="palpite-card">
-      <div class="card-header">
-        <div class="avatar">E</div>
-        <h3 class="user-name">Matheus</h3>
-      </div>
-
-      <div class="palpite-block">
-        <label>Adversário: {{ adversario }}</label><br />
-        <small>{{ dataHora }} - {{ local }}</small>
-      </div>
-
-      <div class="palpite-block">
-        <label>Palpite Torcedor</label>
-        <div class="placar-input">
-          <input type="number" min="0" #matheusTorcedorCasa placeholder="0" />
-          <span>x</span>
-          <input type="number" min="0" #matheusTorcedorVisitante placeholder="0" />
-        </div>
-        <div *ngIf="palpites.matheus.torcedor.casa !== ''">
-          <small>Salvo: {{ palpites.matheus.torcedor.casa }} x {{ palpites.matheus.torcedor.visitante }}</small>
-        </div>
-      </div>
-
-      <div class="palpite-block">
-        <label>Palpite Realista</label>
-        <div class="placar-input">
-          <input type="number" min="0" #matheusRealistaCasa placeholder="0" />
-          <span>x</span>
-          <input type="number" min="0" #matheusRealistaVisitante placeholder="0" />
-        </div>
-        <div *ngIf="palpites.matheus.realista.casa !== ''">
-          <small>Salvo: {{ palpites.matheus.realista.casa }} x {{ palpites.matheus.realista.visitante }}</small>
-        </div>
-      </div>
-
-      <button class="btn-salvar"
-        (click)="salvarPalpites('matheus', 'torcedor', matheusTorcedorCasa.value, matheusTorcedorVisitante.value);
-                 salvarPalpites('matheus', 'realista', matheusRealistaCasa.value, matheusRealistaVisitante.value)">
-        Salvar Palpites
-      </button>
-
-      <div *ngIf="mensagensErro['matheus']" class="msg-erro">
-        {{ mensagensErro['matheus'] }}
-      </div>
-
-      <div *ngIf="mensagensSucesso['matheus']" class="msg-sucesso">
-        {{ mensagensSucesso['matheus'] }}
-      </div>
-    </div>
-
   </div>
 </section>
