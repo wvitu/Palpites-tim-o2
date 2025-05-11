@@ -34,7 +34,15 @@ export class PalpitesComponent implements OnChanges {
 
   salvarPalpites(nome: string) {
     const p = this.palpites[nome];
-    if (!p.torcedor.casa || !p.torcedor.visitante || !p.realista.casa || !p.realista.visitante) {
+    const tc = Number(p.torcedor.casa);
+    const tv = Number(p.torcedor.visitante);
+    const rc = Number(p.realista.casa);
+    const rv = Number(p.realista.visitante);
+
+    if (
+      isNaN(tc) || isNaN(tv) ||
+      isNaN(rc) || isNaN(rv)
+    ) {
       this.mensagensErro[nome] = 'Preencha todos os campos antes de salvar.';
       this.mensagensSucesso[nome] = '';
       return;
