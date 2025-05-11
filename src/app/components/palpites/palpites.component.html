@@ -2,6 +2,7 @@
   <h2 class="section-title">Palpites da Rodada</h2>
 
   <div class="palpites-grid">
+
     <!-- Vitor -->
     <div class="palpite-card">
       <div class="card-header">
@@ -10,28 +11,39 @@
       </div>
 
       <div class="palpite-block">
-        <label>Adversário: {{ adversario }}</label>
-        <br />
+        <label>Adversário: {{ adversario }}</label><br />
         <small>{{ dataHora }} - {{ local }}</small>
       </div>
 
       <div class="palpite-block">
         <label>Palpite Torcedor</label>
         <div class="placar-input">
-          <input type="number" min="0" placeholder="3" />
+          <input type="number" min="0" #vitorTorcedorCasa placeholder="0" />
           <span>x</span>
-          <input type="number" min="0" placeholder="0" />
+          <input type="number" min="0" #vitorTorcedorVisitante placeholder="0" />
+        </div>
+        <div *ngIf="palpites.vitor.torcedor.casa !== ''">
+          <small>Salvo: {{ palpites.vitor.torcedor.casa }} x {{ palpites.vitor.torcedor.visitante }}</small>
         </div>
       </div>
+
       <div class="palpite-block">
         <label>Palpite Realista</label>
         <div class="placar-input">
-          <input type="number" min="0" placeholder="2" />
+          <input type="number" min="0" #vitorRealistaCasa placeholder="0" />
           <span>x</span>
-          <input type="number" min="0" placeholder="1" />
+          <input type="number" min="0" #vitorRealistaVisitante placeholder="0" />
+        </div>
+        <div *ngIf="palpites.vitor.realista.casa !== ''">
+          <small>Salvo: {{ palpites.vitor.realista.casa }} x {{ palpites.vitor.realista.visitante }}</small>
         </div>
       </div>
-      <button class="btn-salvar">Salvar Palpites</button>
+
+      <button class="btn-salvar"
+        (click)="salvarPalpites('vitor', 'torcedor', vitorTorcedorCasa.value, vitorTorcedorVisitante.value);
+                 salvarPalpites('vitor', 'realista', vitorRealistaCasa.value, vitorRealistaVisitante.value)">
+        Salvar Palpites
+      </button>
     </div>
 
     <!-- Matheus -->
@@ -42,28 +54,40 @@
       </div>
 
       <div class="palpite-block">
-        <label>Adversário: {{ adversario }}</label>
-        <br />
+        <label>Adversário: {{ adversario }}</label><br />
         <small>{{ dataHora }} - {{ local }}</small>
       </div>
 
       <div class="palpite-block">
         <label>Palpite Torcedor</label>
         <div class="placar-input">
-          <input type="number" min="0" placeholder="4" />
+          <input type="number" min="0" #matheusTorcedorCasa placeholder="0" />
           <span>x</span>
-          <input type="number" min="0" placeholder="0" />
+          <input type="number" min="0" #matheusTorcedorVisitante placeholder="0" />
+        </div>
+        <div *ngIf="palpites.matheus.torcedor.casa !== ''">
+          <small>Salvo: {{ palpites.matheus.torcedor.casa }} x {{ palpites.matheus.torcedor.visitante }}</small>
         </div>
       </div>
+
       <div class="palpite-block">
         <label>Palpite Realista</label>
         <div class="placar-input">
-          <input type="number" min="0" placeholder="2" />
+          <input type="number" min="0" #matheusRealistaCasa placeholder="0" />
           <span>x</span>
-          <input type="number" min="0" placeholder="0" />
+          <input type="number" min="0" #matheusRealistaVisitante placeholder="0" />
+        </div>
+        <div *ngIf="palpites.matheus.realista.casa !== ''">
+          <small>Salvo: {{ palpites.matheus.realista.casa }} x {{ palpites.matheus.realista.visitante }}</small>
         </div>
       </div>
-      <button class="btn-salvar">Salvar Palpites</button>
+
+      <button class="btn-salvar"
+        (click)="salvarPalpites('matheus', 'torcedor', matheusTorcedorCasa.value, matheusTorcedorVisitante.value);
+                 salvarPalpites('matheus', 'realista', matheusRealistaCasa.value, matheusRealistaVisitante.value)">
+        Salvar Palpites
+      </button>
     </div>
+
   </div>
 </section>
