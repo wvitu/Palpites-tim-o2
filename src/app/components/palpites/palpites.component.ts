@@ -10,7 +10,6 @@ export class PalpitesComponent {
   @Input() dataHora: string = '';
   @Input() local: string = '';
 
-  // Estrutura para armazenar os palpites salvos
   palpites = {
     vitor: {
       torcedor: { casa: '', visitante: '' },
@@ -22,8 +21,12 @@ export class PalpitesComponent {
     }
   };
 
-  // Método que salva os palpites
   salvarPalpites(usuario: 'vitor' | 'matheus', tipo: 'torcedor' | 'realista', casa: string, visitante: string) {
+    if (casa === '' || visitante === '') {
+      alert(`Preencha todos os campos do palpite ${tipo} de ${usuario.charAt(0).toUpperCase() + usuario.slice(1)}`);
+      return;
+    }
+
     this.palpites[usuario][tipo] = {
       casa,
       visitante
