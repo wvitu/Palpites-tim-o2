@@ -7,5 +7,12 @@
   [adversario]="adversario"
   [dataHora]="dataHora"
   [local]="local"
-  [palpiteiros]="palpiteiros">
+  [palpiteiros]="palpiteiros"
+  (palpitesChange)="receberPalpites($event)">
 </app-palpites>
+
+<app-resultado-final
+  [palpiteiros]="palpiteiros"
+  [palpites]="palpitesRef"
+  (pontuacoesAtualizadas)="atualizarPontuacao($event)">
+</app-resultado-final>

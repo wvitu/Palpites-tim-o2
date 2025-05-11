@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-resultado-final',
@@ -6,49 +6,43 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./resultado-final.component.css']
 })
 export class ResultadoFinalComponent {
-  @Input() palpites: any = {};
   @Input() palpiteiros: string[] = [];
+  @Input() palpites: any = {};
   @Output() pontuacoesAtualizadas = new EventEmitter<{ [nome: string]: number }>();
 
-  resultadoCasa: string = '';
-  resultadoVisitante: string = '';
+  resultadoCasa = '';
+  resultadoVisitante = '';
   mensagensAcerto: string[] = [];
 
   verificarResultado() {
-    const casa = this.resultadoCasa;
-    const visitante = this.resultadoVisitante;
-
-    if (casa === '' || visitante === '') {
-      alert('Preencha os dois campos do resultado.');
+    if (this.resultadoCasa === '' || this.resultadoVisitante === '') {
+      alert('Preencha o placar corretamente.');
       return;
     }
 
-    const acertos: { [nome: string]: number } = {};
     this.mensagensAcerto = [];
+    const pontos: { [nome: string]: number } = {};
 
     for (const nome of this.palpiteiros) {
-      let pontos = 0;
+      let acertos = 0;
+      const palpite = this.palpites[nome];
+      if (!palpite) continue;
 
-      if (this.palpites[nome]) {
-        const palpiteTorcedor = this.palpites[nome].torcedor;
-        const palpiteRealista = this.palpites[nome].realista;
-
-        if (palpiteTorcedor.casa === casa && palpiteTorcedor.visitante === visitante) {
-          pontos++;
-          this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite torcedor!`);
-        }
-
-        if (palpiteRealista.casa === casa && palpiteRealista.visitante === visitante) {
-          pontos++;
-          this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite realista!`);
-        }
+      if (palpite.torcedor.casa === this.resultadoCasa && palpite.torcedor.visitante === this.resultadoVisitante) {
+        acertos++;
+        this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite torcedor!`);
       }
 
-      if (pontos > 0) {
-        acertos[nome] = pontos;
+      if (palpite.realista.casa === this.resultadoCasa && palpite.realista.visitante === this.resultadoVisitante) {
+        acertos++;
+        this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite realista!`);
+      }
+
+      if (acertos > 0) {
+        pontos[nome] = acertos;
       }
     }
 
-    this.pontuacoesAtualizadas.emit(acertos);
+    this.pontuacoesAtualizadas.emit(pontos);
   }
 }

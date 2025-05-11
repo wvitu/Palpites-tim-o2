@@ -10,6 +10,7 @@ export class InicioComponent {
   dataHora: string = '';
   local: string = '';
   palpiteiros: string[] = [];
+  palpitesRef: any = {};
 
   atualizarJogo(info: { adversario: string, dataHora: string, local: string }) {
     this.adversario = info.adversario;
@@ -19,7 +20,15 @@ export class InicioComponent {
 
   adicionarPalpiteiro(nome: string) {
     if (nome && !this.palpiteiros.includes(nome)) {
-      this.palpiteiros = [...this.palpiteiros, nome]; // Garante nova referência
+      this.palpiteiros = [...this.palpiteiros, nome];
     }
+  }
+
+  receberPalpites(palpites: any) {
+    this.palpitesRef = palpites;
+  }
+
+  atualizarPontuacao(pontos: { [nome: string]: number }) {
+    console.log('Pontuações atualizadas:', pontos);
   }
 }

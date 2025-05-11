@@ -2,16 +2,16 @@
   <h2 class="section-title">Verificar o Resultado do Jogo</h2>
 
   <div class="resultado-input">
-    <input type="number" min="0" [(ngModel)]="resultadoCasa" placeholder="0" />
+    <input type="number" [(ngModel)]="resultadoCasa" placeholder="0" />
     <span>x</span>
-    <input type="number" min="0" [(ngModel)]="resultadoVisitante" placeholder="0" />
+    <input type="number" [(ngModel)]="resultadoVisitante" placeholder="0" />
   </div>
 
   <div class="resultado-btn">
     <button (click)="verificarResultado()">Verificar Resultado do Jogo</button>
   </div>
 
-  <div *ngFor="let msg of mensagensAcerto" class="msg-sucesso">
-    {{ msg }}
+  <div *ngFor="let mensagem of mensagensAcerto" class="msg-sucesso">
+    {{ mensagem }}
   </div>
 </section>
