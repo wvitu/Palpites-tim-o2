@@ -1,3 +1,14 @@
-<app-match-info (jogoAtualizado)="aoAtualizarJogo($event)"></app-match-info>
-<app-palpites [adversario]="adversario" [dataHora]="dataHora" [local]="local"></app-palpites>
+<app-match-info
+  (jogoAtualizado)="onJogoAtualizado($event)"
+  (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
+</app-match-info>
+
+<app-palpites
+  *ngIf="palpiteiros.length > 0"
+  [palpiteiros]="palpiteiros"
+  [adversario]="adversario"
+  [dataHora]="dataHora"
+  [local]="local">
+</app-palpites>
+
 <app-resultado-final></app-resultado-final>

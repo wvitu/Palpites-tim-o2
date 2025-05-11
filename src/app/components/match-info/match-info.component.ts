@@ -9,20 +9,20 @@ export class MatchInfoComponent {
   adversario = '';
   dataHora = '';
   local = '';
+  novoPalpiteiro = '';
 
-  @Output() jogoAtualizado = new EventEmitter<{ adversario: string, dataHora: string, local: string }>();
+  @Output() jogoAtualizado = new EventEmitter<{ adversario: string; dataHora: string; local: string }>();
+  @Output() adicionarPalpiteiro = new EventEmitter<string>();
 
   atualizarInformacoes() {
     if (!this.adversario.trim()) {
       alert('Informe o nome do adversário.');
       return;
     }
-
     if (!this.dataHora) {
       alert('Informe a data e hora.');
       return;
     }
-
     if (this.local.trim().length < 5) {
       alert('O local deve ter no mínimo 5 caracteres.');
       return;
@@ -33,5 +33,12 @@ export class MatchInfoComponent {
       dataHora: this.dataHora,
       local: this.local
     });
+  }
+
+  adicionar() {
+    if (this.novoPalpiteiro.trim().length > 0) {
+      this.adicionarPalpiteiro.emit(this.novoPalpiteiro.trim());
+      this.novoPalpiteiro = '';
+    }
   }
 }
