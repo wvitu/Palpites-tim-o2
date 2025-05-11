@@ -12,17 +12,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td class="nome">Matheus</td>
-            <td>15</td>
-            <td>3</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td class="nome">Vitor</td>
-            <td>12</td>
-            <td>2</td>
+          <tr *ngFor="let jogador of ranking; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td class="nome">{{ jogador.nome }}</td>
+            <td>{{ jogador.pontos }}</td>
+            <td>{{ jogador.pontos }}</td>
           </tr>
         </tbody>
       </table>
