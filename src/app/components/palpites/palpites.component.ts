@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-palpites',
@@ -6,5 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./palpites.component.css']
 })
 export class PalpitesComponent {
-
+  @Input() adversario: string = 'Adversário';
+  @Input() dataHora: string = '';
+  @Input() local: string = '';
 }

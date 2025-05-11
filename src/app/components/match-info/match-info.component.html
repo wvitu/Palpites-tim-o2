@@ -3,29 +3,44 @@
 
   <div class="match-row">
     <div class="team">
-      <img src="assets/corinthians-logo.png" alt="Corinthians" class="team-logo" />
+      <img
+        src="assets/corinthians-logo.png"
+        alt="Corinthians"
+        class="team-logo"
+      />
       <span class="team-name">Corinthians</span>
     </div>
 
     <span class="vs-text">x</span>
 
     <div class="team">
-      <input type="text" placeholder="Adversário" class="opponent-input" />
-      <button class="ok-button">OK</button>
+      <input
+        type="text"
+        placeholder="Adversário"
+        [(ngModel)]="adversario"
+        class="opponent-input"
+      />
     </div>
   </div>
 
   <div class="match-row">
     <label for="date">Data:</label>
-    <input type="text" id="date" placeholder="00/00/2023 - 00:00" class="info-input" />
+    <input
+      type="datetime-local"
+      id="date"
+      [(ngModel)]="dataHora"
+      class="info-input"
+    />
   </div>
 
   <div class="match-row">
     <label for="location">Local:</label>
-    <input type="text" id="location" placeholder="Neo Química Arena" class="info-input" />
+    <input type="text" id="location" [(ngModel)]="local" class="info-input" />
   </div>
 
   <div class="update-button">
-    <button>Atualizar Informações do Jogo</button>
+    <button (click)="atualizarInformacoes()">
+      Atualizar Informações do Jogo
+    </button>
   </div>
 </div>

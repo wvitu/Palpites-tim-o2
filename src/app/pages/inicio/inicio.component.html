@@ -1,3 +1,3 @@
-<app-match-info></app-match-info>
-<app-palpites></app-palpites>
+<app-match-info (jogoAtualizado)="aoAtualizarJogo($event)"></app-match-info>
+<app-palpites [adversario]="adversario" [dataHora]="dataHora" [local]="local"></app-palpites>
 <app-resultado-final></app-resultado-final>
