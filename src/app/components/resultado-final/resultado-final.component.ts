@@ -15,11 +15,13 @@ export class ResultadoFinalComponent {
   mensagensAcerto: string[] = [];
 
   verificarResultado() {
-    const casa = this.resultadoCasa;
-    const visitante = this.resultadoVisitante;
+    console.log('PALPITES ATUAIS:', this.palpites);
 
-    if (casa === '' || visitante === '') {
-      alert('Preencha os dois campos do resultado.');
+    const casa = parseInt(this.resultadoCasa);
+    const visitante = parseInt(this.resultadoVisitante);
+
+    if (isNaN(casa) || isNaN(visitante)) {
+      alert('Preencha os dois campos do resultado com números.');
       return;
     }
 
@@ -33,12 +35,12 @@ export class ResultadoFinalComponent {
         const palpiteTorcedor = this.palpites[nome].torcedor;
         const palpiteRealista = this.palpites[nome].realista;
 
-        if (palpiteTorcedor.casa === casa && palpiteTorcedor.visitante === visitante) {
+        if (+palpiteTorcedor.casa === casa && +palpiteTorcedor.visitante === visitante) {
           pontos++;
           this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite torcedor!`);
         }
 
-        if (palpiteRealista.casa === casa && palpiteRealista.visitante === visitante) {
+        if (+palpiteRealista.casa === casa && +palpiteRealista.visitante === visitante) {
           pontos++;
           this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite realista!`);
         }
@@ -47,6 +49,10 @@ export class ResultadoFinalComponent {
       if (pontos > 0) {
         acertos[nome] = pontos;
       }
+    }
+
+    if (Object.keys(acertos).length === 0) {
+      this.mensagensAcerto.push('Ninguém acertou desta vez.');
     }
 
     this.pontuacoesAtualizadas.emit(acertos);

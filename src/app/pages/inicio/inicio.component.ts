@@ -28,7 +28,25 @@ export class InicioComponent {
     this.palpitesRef = palpites;
   }
 
+  pontuacao: { [nome: string]: { pontos: number; acertos: number } } = {};
+
   atualizarPontuacao(pontos: { [nome: string]: number }) {
-    console.log('Pontuações atualizadas:', pontos);
+    for (const nome in pontos) {
+      if (!this.pontuacao[nome]) {
+        this.pontuacao[nome] = { pontos: 0, acertos: 0 };
+      }
+      this.pontuacao[nome].pontos += pontos[nome];
+      this.pontuacao[nome].acertos += 1;
+    }
   }
+
+
+  getClassificacao() {
+    return Object.entries(this.pontuacao).map(([nome, dados]) => ({
+      nome,
+      pontos: dados.pontos,
+      acertos: dados.acertos
+    }));
+  }
+
 }

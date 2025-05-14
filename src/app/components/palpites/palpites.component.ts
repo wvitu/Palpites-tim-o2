@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-palpites',
@@ -10,6 +10,8 @@ export class PalpitesComponent implements OnChanges {
   @Input() dataHora: string = '';
   @Input() local: string = '';
   @Input() palpiteiros: string[] = [];
+  @Output() palpitesChange = new EventEmitter<any>();
+
 
   palpites: any = {};
   mensagensErro: any = {};
@@ -41,5 +43,6 @@ export class PalpitesComponent implements OnChanges {
 
     this.mensagensErro[nome] = '';
     this.mensagensSucesso[nome] = 'Palpites salvos com sucesso!';
+    this.palpitesChange.emit(this.palpites);
   }
 }
