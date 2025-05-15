@@ -1,54 +1,49 @@
 .top-bar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  background-color:  #ffffffc9;
-  padding: 10px 30px;
-  border-bottom: 1px solid #ccc;
-  position: relative;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: black;
+  color: white;
 }
 
-.left,
-.center,
-.right {
-  flex: 1;
+.header-content {
   display: flex;
   align-items: center;
-}
-
-.left {
-  justify-content: flex-start;
-}
-
-.center {
+  gap: 12px;
   justify-content: center;
-}
-
-.right {
-  justify-content: flex-end;
-  gap: 15px;
+  flex: 1;
 }
 
 .logo {
-  height: 60px;
+  width: 40px;
+  height: auto;
 }
 
 .site-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
-  color: #000;
-  margin: 0;
+  color: white;
+  text-decoration: none;
 }
 
-.right button {
-  background: none;
-  border: none;
-  font-size: 16px;
-  font-weight: bold;
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-buttons button {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  color: #000;
+  transition: background 0.3s ease;
+  font-weight: bold;
 }
 
-.right button:hover {
-  color: #cc0000;
+.nav-buttons button:hover {
+  background: white;
+  color: black;
 }

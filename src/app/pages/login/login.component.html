@@ -1,0 +1,18 @@
+<div class="login-container">
+  <div class="fundo-escuro"></div>
+
+  <div class="login-box">
+    <div class="titulo-wrapper">
+      <img src="/assets/corinthians-logo.png" alt="Corinthians" class="logo-bg" />
+      <h2 class="titulo-login">Login Bando de Loucos</h2>
+    </div>
+
+    <input type="email" placeholder="E-mail do grupo" [(ngModel)]="email" />
+    <input type="password" placeholder="Senha" [(ngModel)]="senha" />
+
+    <button (click)="entrar()">Entrar</button>
+    <button (click)="registrar()">Registrar novo grupo</button>
+
+    <p *ngIf="erro" class="erro">{{ erro }}</p>
+  </div>
+</div>

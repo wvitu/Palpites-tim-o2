@@ -1,0 +1,91 @@
+.login-container {
+  background-image: url('/assets/fundo-site-login.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.fundo-escuro {
+  background-color: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.login-box {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: white;
+  text-shadow: 1px 1px 3px #000;
+}
+
+.logo-bg {
+  position: absolute;
+  width: 200px;
+  opacity: 0.1;
+  top: 20px;
+}
+
+.titulo-login {
+  font-size: 32px;
+  margin-bottom: 24px;
+  z-index: 3;
+}
+
+input {
+  padding: 12px;
+  margin: 10px 0;
+  width: 300px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: none;
+}
+
+button {
+  padding: 12px 24px;
+  margin: 8px;
+  border: none;
+  border-radius: 6px;
+  background-color: #000000cc;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #222;
+}
+
+.erro {
+  margin-top: 12px;
+  color: #ffaaaa;
+}
+
+.titulo-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.logo-bg {
+  position: initial;
+  width: 180px;
+  opacity: 0.15;
+  z-index: 1;
+}
+
+.titulo-login {
+  position: relative;
+  z-index: 2;
+  font-size: 32px;
+}

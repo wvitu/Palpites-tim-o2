@@ -17,6 +17,7 @@ import { ResultadoFinalComponent } from './components/resultado-final/resultado-
 import { ClassificacaoComponent } from './components/classificacao-card/classificacao-card.component';
 import { InicioComponent } from './pages/inicio/inicio.component';
 import { ClassificacaoPageComponent } from './pages/classificacao/classificacao.component';
+import { LoginComponent } from './pages/login/login.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ClassificacaoPageComponent } from './pages/classificacao/classificacao.
     ResultadoFinalComponent,
     ClassificacaoComponent,
     InicioComponent,
-    ClassificacaoPageComponent
+    ClassificacaoPageComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
