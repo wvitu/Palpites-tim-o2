@@ -15,8 +15,6 @@ export class ResultadoFinalComponent {
   mensagensAcerto: string[] = [];
 
   verificarResultado() {
-    console.log('PALPITES ATUAIS:', this.palpites);
-
     const casa = parseInt(this.resultadoCasa);
     const visitante = parseInt(this.resultadoVisitante);
 
@@ -35,14 +33,32 @@ export class ResultadoFinalComponent {
         const palpiteTorcedor = this.palpites[nome].torcedor;
         const palpiteRealista = this.palpites[nome].realista;
 
+        // Palpite Torcedor
+        if (+palpiteTorcedor.casa === casa) {
+          pontos++;
+          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite torcedor).`);
+        }
+        if (+palpiteTorcedor.visitante === visitante) {
+          pontos++;
+          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite torcedor).`);
+        }
         if (+palpiteTorcedor.casa === casa && +palpiteTorcedor.visitante === visitante) {
           pontos++;
-          this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite torcedor!`);
+          this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite torcedor)!`);
         }
 
+        // Palpite Realista
+        if (+palpiteRealista.casa === casa) {
+          pontos++;
+          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite realista).`);
+        }
+        if (+palpiteRealista.visitante === visitante) {
+          pontos++;
+          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite realista).`);
+        }
         if (+palpiteRealista.casa === casa && +palpiteRealista.visitante === visitante) {
           pontos++;
-          this.mensagensAcerto.push(`Parabéns ${nome}, você acertou com o palpite realista!`);
+          this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite realista)!`);
         }
       }
 

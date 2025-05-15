@@ -1,3 +1,8 @@
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { environment } from '../environments/environment';
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms'; // <-- IMPORTANTE!
@@ -28,7 +33,10 @@ import { ClassificacaoPageComponent } from './pages/classificacao/classificacao.
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule // <-- IMPORTAR AQUI!
+    FormsModule, // <-- IMPORTAR AQUI!
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
+provideFirestore(() => getFirestore()),
+provideAuth(() => getAuth()),
   ],
   providers: [],
   bootstrap: [AppComponent]
