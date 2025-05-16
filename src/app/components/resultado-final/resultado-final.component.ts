@@ -35,6 +35,11 @@ export class ResultadoFinalComponent {
       return;
     }
 
+    if (!this.adversario || !this.dataHora || !this.local) {
+      alert('Preencha os dados da partida (adversário, data e local).');
+      return;
+    }
+
     const acertos: { [nome: string]: number } = {};
     this.mensagensAcerto = [];
 
@@ -42,43 +47,37 @@ export class ResultadoFinalComponent {
       let pontos = 0;
       let acertosIndividuais = 0;
 
-      if (this.palpites[nome]) {
-        const palpiteTorcedor = this.palpites[nome].torcedor;
-        const palpiteRealista = this.palpites[nome].realista;
+      const palpite = this.palpites[nome];
+      if (!palpite) continue;
 
-        // Palpite Torcedor
-        if (+palpiteTorcedor.casa === casa) {
-          pontos++;
-          acertosIndividuais++;
-          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite torcedor).`);
-        }
-        if (+palpiteTorcedor.visitante === visitante) {
-          pontos++;
-          acertosIndividuais++;
-          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite torcedor).`);
-        }
-        if (+palpiteTorcedor.casa === casa && +palpiteTorcedor.visitante === visitante) {
-          pontos++;
-          acertosIndividuais++;
-          this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite torcedor)!`);
-        }
+      const { torcedor, realista } = palpite;
 
-        // Palpite Realista
-        if (+palpiteRealista.casa === casa) {
-          pontos++;
-          acertosIndividuais++;
-          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite realista).`);
-        }
-        if (+palpiteRealista.visitante === visitante) {
-          pontos++;
-          acertosIndividuais++;
-          this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite realista).`);
-        }
-        if (+palpiteRealista.casa === casa && +palpiteRealista.visitante === visitante) {
-          pontos++;
-          acertosIndividuais++;
-          this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite realista)!`);
-        }
+      // Palpite Torcedor
+      if (+torcedor.casa === casa) {
+        pontos++; acertosIndividuais++;
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite torcedor).`);
+      }
+      if (+torcedor.visitante === visitante) {
+        pontos++; acertosIndividuais++;
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite torcedor).`);
+      }
+      if (+torcedor.casa === casa && +torcedor.visitante === visitante) {
+        pontos++; acertosIndividuais++;
+        this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite torcedor)!`);
+      }
+
+      // Palpite Realista
+      if (+realista.casa === casa) {
+        pontos++; acertosIndividuais++;
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite realista).`);
+      }
+      if (+realista.visitante === visitante) {
+        pontos++; acertosIndividuais++;
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite realista).`);
+      }
+      if (+realista.casa === casa && +realista.visitante === visitante) {
+        pontos++; acertosIndividuais++;
+        this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite realista)!`);
       }
 
       if (pontos > 0) {
@@ -93,11 +92,14 @@ export class ResultadoFinalComponent {
 
     this.pontuacoesAtualizadas.emit(acertos);
 
-    // Salvar a partida com verificado: true no Firestore
+    // 🔒 Salvar resultado da partida
     const uidGrupo = this.auth.getUidGrupo();
-    if (!uidGrupo) return;
+    if (!uidGrupo) {
+      console.error('Grupo não autenticado');
+      return;
+    }
 
-    const partidaId = new Date().getTime().toString(); // ou gere um ID único
+    const partidaId = this.gerarIdPartida();
     const partidaRef = doc(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}`);
 
     await setDoc(partidaRef, {
@@ -108,5 +110,11 @@ export class ResultadoFinalComponent {
       resultadoVisitante: visitante,
       verificado: true
     });
+
+    console.log('Partida salva com sucesso:', partidaId);
+  }
+
+  private gerarIdPartida(): string {
+    return `${this.dataHora}-${this.adversario}`.replace(/[^a-zA-Z0-9]/g, '_');
   }
 }
