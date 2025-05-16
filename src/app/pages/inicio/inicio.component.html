@@ -8,8 +8,9 @@
   [dataHora]="dataHora"
   [local]="local"
   [palpiteiros]="palpiteiros"
-  (palpitesChange)="receberPalpites($event)">
-</app-palpites>
+  [partidaId]="partidaId"
+  (palpitesChange)="receberPalpites($event)"
+></app-palpites>
 
 <app-resultado-final
   [palpiteiros]="palpiteiros"

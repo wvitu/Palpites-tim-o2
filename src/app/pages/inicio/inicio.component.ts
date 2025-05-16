@@ -8,6 +8,7 @@ import { PalpiteService } from 'src/app/services/palpite.service';
   styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent implements OnInit {
+
   adversario: string = '';
   dataHora: string = '';
   local: string = '';

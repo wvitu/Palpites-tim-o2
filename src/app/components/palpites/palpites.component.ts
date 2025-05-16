@@ -7,10 +7,11 @@ import { PalpiteService } from 'src/app/services/palpite.service';
   styleUrls: ['./palpites.component.css']
 })
 export class PalpitesComponent implements OnChanges {
-  @Input() adversario: string = 'Adversário';
+  @Input() adversario: string = '';
   @Input() dataHora: string = '';
   @Input() local: string = '';
   @Input() palpiteiros: string[] = [];
+  @Input() partidaId: string = ''; // ID da partida que será usado ao salvar
   @Output() palpitesChange = new EventEmitter<any>();
 
   palpites: any = {};
@@ -49,12 +50,12 @@ export class PalpitesComponent implements OnChanges {
     this.mensagensSucesso[nome] = 'Palpites salvos com sucesso!';
     this.palpitesChange.emit(this.palpites);
 
-    const partidaId = this.gerarIdPartida();
-    await this.palpiteService.salvarPalpite(partidaId, nome, p);
+    const partidaIdFinal = this.partidaId || this.gerarIdPartida();
+    await this.palpiteService.salvarPalpite(partidaIdFinal, nome, p);
   }
 
   private gerarIdPartida(): string {
     const data = new Date();
-    return `${data.getFullYear()}-${data.getMonth()+1}-${data.getDate()}_${this.adversario}`;
+    return `${data.getFullYear()}-${data.getMonth() + 1}-${data.getDate()}_${this.adversario}`;
   }
 }
