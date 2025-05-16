@@ -11,8 +11,7 @@ const routes: Routes = [
   { path: '', component: InicioComponent, canActivate: [AuthGuard] },
   { path: 'classificacao', component: ClassificacaoPageComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
-  { path: 'historico', component: HistoricoComponent }
-
+  { path: 'historico', component: HistoricoComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PalpiteService } from 'src/app/services/palpite.service';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-resultado-final',
@@ -9,15 +11,22 @@ import { PalpiteService } from 'src/app/services/palpite.service';
 export class ResultadoFinalComponent {
   @Input() palpites: any = {};
   @Input() palpiteiros: string[] = [];
+  @Input() adversario: string = '';
+  @Input() dataHora: string = '';
+  @Input() local: string = '';
   @Output() pontuacoesAtualizadas = new EventEmitter<{ [nome: string]: number }>();
 
   resultadoCasa: string = '';
   resultadoVisitante: string = '';
   mensagensAcerto: string[] = [];
 
-  constructor(private palpiteService: PalpiteService) {}
+  constructor(
+    private palpiteService: PalpiteService,
+    private firestore: Firestore,
+    private auth: AuthService
+  ) {}
 
-  verificarResultado() {
+  async verificarResultado() {
     const casa = parseInt(this.resultadoCasa);
     const visitante = parseInt(this.resultadoVisitante);
 
@@ -36,7 +45,6 @@ export class ResultadoFinalComponent {
         const palpiteTorcedor = this.palpites[nome].torcedor;
         const palpiteRealista = this.palpites[nome].realista;
 
-        // Palpite Torcedor
         if (+palpiteTorcedor.casa === casa) {
           pontos++;
           this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite torcedor).`);
@@ -50,7 +58,6 @@ export class ResultadoFinalComponent {
           this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite torcedor)!`);
         }
 
-        // Palpite Realista
         if (+palpiteRealista.casa === casa) {
           pontos++;
           this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite realista).`);
@@ -67,12 +74,8 @@ export class ResultadoFinalComponent {
 
       if (pontos > 0) {
         acertos[nome] = pontos;
+        this.palpiteService.atualizarRanking(nome, pontos);
       }
-    }
-
-    // 🔄 Salva no Firestore
-    for (const nome in acertos) {
-      this.palpiteService.atualizarRanking(nome, acertos[nome]);
     }
 
     if (Object.keys(acertos).length === 0) {
@@ -80,5 +83,21 @@ export class ResultadoFinalComponent {
     }
 
     this.pontuacoesAtualizadas.emit(acertos);
+
+    // 🔥 Salvar a partida com verificado: true no Firestore
+    const uidGrupo = this.auth.getUidGrupo();
+    if (!uidGrupo) return;
+
+    const partidaId = new Date().getTime().toString(); // ou gere um ID único
+    const partidaRef = doc(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}`);
+
+    await setDoc(partidaRef, {
+      adversario: this.adversario,
+      dataHora: this.dataHora,
+      local: this.local,
+      resultadoCasa: casa,
+      resultadoVisitante: visitante,
+      verificado: true
+    });
   }
 }
