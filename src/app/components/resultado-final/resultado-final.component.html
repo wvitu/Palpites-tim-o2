@@ -1,16 +1,26 @@
 <section class="resultado-section">
   <h2 class="section-title">Verificar o Resultado do Jogo</h2>
 
-  <div class="resultado-input">
-    <input type="number" min="0" [(ngModel)]="resultadoCasa" placeholder="0" />
-    <span>x</span>
-    <input type="number" min="0" [(ngModel)]="resultadoVisitante" placeholder="0" />
+  <!-- Dados da partida -->
+  <div class="partida-info">
+    <p><strong>Adversário:</strong> {{ adversario || 'Não informado' }}</p>
+    <p><strong>Data/Hora:</strong> {{ dataHora || 'Não informado' }}</p>
+    <p><strong>Local:</strong> {{ local || 'Não informado' }}</p>
   </div>
 
+  <!-- Entrada dos resultados -->
+  <div class="resultado-input">
+    <input type="number" min="0" [(ngModel)]="resultadoCasa" placeholder="Gols Corinthians" />
+    <span>x</span>
+    <input type="number" min="0" [(ngModel)]="resultadoVisitante" placeholder="Gols Adversário" />
+  </div>
+
+  <!-- Botão -->
   <div class="resultado-btn">
     <button (click)="verificarResultado()">Verificar Resultado do Jogo</button>
   </div>
 
+  <!-- Mensagens de acerto -->
   <div *ngFor="let msg of mensagensAcerto" class="msg-sucesso">
     {{ msg }}
   </div>
