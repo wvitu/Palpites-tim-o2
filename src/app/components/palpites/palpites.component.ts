@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { PalpiteService } from 'src/app/services/palpite.service';
 
 @Component({
@@ -13,13 +13,11 @@ export class PalpitesComponent implements OnChanges {
   @Input() palpiteiros: string[] = [];
   @Output() palpitesChange = new EventEmitter<any>();
 
-
   palpites: any = {};
   mensagensErro: any = {};
   mensagensSucesso: any = {};
 
   constructor(private palpiteService: PalpiteService) {}
-
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['palpiteiros'] && changes['palpiteiros'].currentValue) {
@@ -36,10 +34,12 @@ export class PalpitesComponent implements OnChanges {
     }
   }
 
-  salvarPalpites(nome: string) {
+  async salvarPalpites(nome: string) {
     const p = this.palpites[nome];
-    if (p.torcedor.casa === '' || p.torcedor.visitante === '' ||
-        p.realista.casa === '' || p.realista.visitante === '') {
+    if (
+      p.torcedor.casa === '' || p.torcedor.visitante === '' ||
+      p.realista.casa === '' || p.realista.visitante === ''
+    ) {
       this.mensagensErro[nome] = 'Preencha todos os campos antes de salvar.';
       this.mensagensSucesso[nome] = '';
       return;
@@ -49,12 +49,12 @@ export class PalpitesComponent implements OnChanges {
     this.mensagensSucesso[nome] = 'Palpites salvos com sucesso!';
     this.palpitesChange.emit(this.palpites);
 
-    const partidaId = `${this.adversario}-${this.dataHora}`.replace(/\s+/g, '_');
+    const partidaId = this.gerarIdPartida();
+    await this.palpiteService.salvarPalpite(partidaId, nome, p);
+  }
 
-    this.palpiteService.salvarPalpite(partidaId, nome, p)
-      .catch(() => {
-        this.mensagensErro[nome] = 'Erro ao salvar palpite na nuvem.';
-        this.mensagensSucesso[nome] = '';
-      });
+  private gerarIdPartida(): string {
+    const data = new Date();
+    return `${data.getFullYear()}-${data.getMonth()+1}-${data.getDate()}_${this.adversario}`;
   }
 }
