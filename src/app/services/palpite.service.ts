@@ -25,7 +25,7 @@ export class PalpiteService {
     await setDoc(ref, palpite, { merge: true });
   }
 
-  async atualizarRanking(nome: string, pontos: number) {
+  async atualizarRanking(nome: string, pontos: number, acertos: number) {
     const uidGrupo = this.auth.getUidGrupo();
     if (!uidGrupo) throw new Error('Grupo não autenticado.');
 
@@ -38,10 +38,11 @@ export class PalpiteService {
     }
 
     dados.pontos += pontos;
-    dados.acertos += 1;
+    dados.acertos += acertos;
 
     await setDoc(ref, dados);
   }
+
 
   async getMembrosGrupo(): Promise<string[]> {
     const uidGrupo = this.auth.getUidGrupo();

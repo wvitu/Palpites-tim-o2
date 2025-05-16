@@ -40,41 +40,50 @@ export class ResultadoFinalComponent {
 
     for (const nome of this.palpiteiros) {
       let pontos = 0;
+      let acertosIndividuais = 0;
 
       if (this.palpites[nome]) {
         const palpiteTorcedor = this.palpites[nome].torcedor;
         const palpiteRealista = this.palpites[nome].realista;
 
+        // Palpite Torcedor
         if (+palpiteTorcedor.casa === casa) {
           pontos++;
+          acertosIndividuais++;
           this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite torcedor).`);
         }
         if (+palpiteTorcedor.visitante === visitante) {
           pontos++;
+          acertosIndividuais++;
           this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite torcedor).`);
         }
         if (+palpiteTorcedor.casa === casa && +palpiteTorcedor.visitante === visitante) {
           pontos++;
+          acertosIndividuais++;
           this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite torcedor)!`);
         }
 
+        // Palpite Realista
         if (+palpiteRealista.casa === casa) {
           pontos++;
+          acertosIndividuais++;
           this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite realista).`);
         }
         if (+palpiteRealista.visitante === visitante) {
           pontos++;
+          acertosIndividuais++;
           this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite realista).`);
         }
         if (+palpiteRealista.casa === casa && +palpiteRealista.visitante === visitante) {
           pontos++;
+          acertosIndividuais++;
           this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite realista)!`);
         }
       }
 
       if (pontos > 0) {
         acertos[nome] = pontos;
-        this.palpiteService.atualizarRanking(nome, pontos);
+        await this.palpiteService.atualizarRanking(nome, pontos, acertosIndividuais);
       }
     }
 
@@ -84,7 +93,7 @@ export class ResultadoFinalComponent {
 
     this.pontuacoesAtualizadas.emit(acertos);
 
-    // 🔥 Salvar a partida com verificado: true no Firestore
+    // Salvar a partida com verificado: true no Firestore
     const uidGrupo = this.auth.getUidGrupo();
     if (!uidGrupo) return;
 
