@@ -31,4 +31,5 @@ export class HistoricoComponent implements OnInit {
       }
     });
   }
+
 }

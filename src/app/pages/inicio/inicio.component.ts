@@ -24,15 +24,18 @@ export class InicioComponent implements OnInit {
     const state = navigation?.extras?.state as any;
 
     if (state?.partida) {
-      this.adversario = state.partida.adversario;
-      this.dataHora = state.partida.dataHora;
-      this.local = state.partida.local;
+      this.adversario = state.partida.adversario || '';
+      this.dataHora = state.partida.dataHora || '';
+      this.local = state.partida.local || '';
       this.partidaId = state.partida.id || '';
+    } else {
+      console.warn('Nenhuma partida carregada do estado de navegação');
     }
 
+    // Carrega membros e ranking
     this.palpiteiros = await this.palpiteService.getMembrosGrupo();
-
     const ranking = await this.palpiteService.getRankingGrupo();
+
     this.pontuacao = {};
     for (const item of ranking) {
       this.pontuacao[item.nome] = {
@@ -41,6 +44,7 @@ export class InicioComponent implements OnInit {
       };
     }
   }
+
 
   atualizarJogo(info: { adversario: string, dataHora: string, local: string }) {
     this.adversario = info.adversario;

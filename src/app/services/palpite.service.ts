@@ -17,8 +17,12 @@ import { AuthService } from './auth.service';
 export class PalpiteService {
   constructor(private firestore: Firestore, private auth: AuthService) {}
 
+  getUidGrupo(): string | null {
+    return this.auth.getUidGrupo();
+  }
+
   private getUidGrupoOrThrow(): string {
-    const uidGrupo = this.auth.getUidGrupo();
+    const uidGrupo = this.getUidGrupo();
     if (!uidGrupo) throw new Error('Grupo não autenticado.');
     return uidGrupo;
   }
@@ -86,7 +90,6 @@ export class PalpiteService {
       const partidaId = docSnap.id;
       const partida = docSnap.data();
 
-      // Verificação básica para entender por que dados podem estar incompletos
       if (!partida) {
         console.warn(`Partida ${partidaId} sem dados.`);
         continue;
@@ -102,9 +105,9 @@ export class PalpiteService {
 
       partidas.push({
         id: partidaId,
-        adversario: partida['adversario'] || 'Desconhecido',
+        adversario: partida['adversario'] || null,
         dataHora: partida['dataHora'] || null,
-        local: partida['local'] || 'Local não informado',
+        local: partida['local'] || null,
         resultadoCasa: partida['resultadoCasa'] ?? null,
         resultadoVisitante: partida['resultadoVisitante'] ?? null,
         palpites
