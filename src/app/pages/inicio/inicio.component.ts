@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PalpiteService } from 'src/app/services/palpite.service';
 
 @Component({
@@ -14,25 +15,33 @@ export class InicioComponent implements OnInit {
   palpitesRef: any = {};
   pontuacao: { [nome: string]: { pontos: number; acertos: number } } = {};
 
-  constructor(private palpiteService: PalpiteService) {}
+  constructor(private router: Router, private palpiteService: PalpiteService) {}
 
-  ngOnInit() {
-    // Carrega membros
-    this.palpiteService.getMembrosGrupo().then(membros => {
-      this.palpiteiros = membros;
-    }).catch(() => {
-      console.warn('Nenhum membro encontrado ou não autenticado');
-    });
+  async ngOnInit(): Promise<void> {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state as any;
 
-    // Carrega ranking
-    this.palpiteService.getRankingGrupo().then(ranking => {
-      for (const item of ranking) {
-        this.pontuacao[item.nome] = {
-          pontos: item.pontos,
-          acertos: item.acertos
-        };
-      }
-    });
+    if (state?.partida) {
+      this.adversario = state.partida.adversario;
+      this.dataHora = state.partida.dataHora;
+      this.local = state.partida.local;
+    }
+
+    this.palpiteiros = await this.palpiteService.getMembrosGrupo();
+
+    const ranking = await this.palpiteService.getRankingGrupo();
+    this.pontuacao = {};
+    for (const item of ranking) {
+      this.pontuacao[item.nome] = {
+        pontos: item.pontos,
+        acertos: item.acertos
+      };
+    }
+  }
+
+
+  async carregarPalpiteiros() {
+    this.palpiteiros = await this.palpiteService.getMembrosGrupo();
   }
 
   atualizarJogo(info: { adversario: string, dataHora: string, local: string }) {
@@ -42,10 +51,8 @@ export class InicioComponent implements OnInit {
   }
 
   adicionarPalpiteiro(nome: string) {
-    nome = nome.trim();
     if (nome && !this.palpiteiros.includes(nome)) {
       this.palpiteiros = [...this.palpiteiros, nome];
-      this.palpiteService.adicionarMembroGrupo(nome);
     }
   }
 

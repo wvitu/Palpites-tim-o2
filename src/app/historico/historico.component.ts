@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PalpiteService } from '../services/palpite.service';
+import { Router } from '@angular/router';
+import { PalpiteService } from 'src/app/services/palpite.service';
 
 @Component({
   selector: 'app-historico',
@@ -9,11 +10,20 @@ import { PalpiteService } from '../services/palpite.service';
 export class HistoricoComponent implements OnInit {
   partidasConferidas: any[] = [];
 
-  constructor(private palpiteService: PalpiteService) {}
+  constructor(private palpiteService: PalpiteService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.palpiteService.getPartidasConferidas().then(partidas => {
-      this.partidasConferidas = partidas;
+  async ngOnInit(): Promise<void> {
+    this.partidasConferidas = await this.palpiteService.getPartidasConferidas();
+
+    // Ordenar da mais recente para mais antiga
+    this.partidasConferidas.sort((a, b) => {
+      const dataA = new Date(a.dataHora);
+      const dataB = new Date(b.dataHora);
+      return dataB.getTime() - dataA.getTime();
     });
+  }
+
+  editarPalpite(partida: any) {
+    this.router.navigate(['/'], { state: { partida } });
   }
 }

@@ -69,10 +69,14 @@ export class PalpiteService {
     const rankingRef = collection(this.firestore, `grupos/${uidGrupo}/ranking`);
     const snapshot = await getDocs(rankingRef);
 
-    return snapshot.docs.map(doc => ({
-      nome: doc.id,
-      ...(doc.data() as { pontos: number; acertos: number })
-    }));
+    return snapshot.docs.map(doc => {
+      const data = doc.data() as any;
+      return {
+        nome: doc.id,
+        pontos: data.pontos || 0,
+        acertos: data.acertos || 0
+      };
+    });
   }
 
   async getPartidasConferidas(): Promise<any[]> {

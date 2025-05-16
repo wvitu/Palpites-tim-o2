@@ -2,14 +2,16 @@
 <ul>
   <li *ngFor="let partida of partidasConferidas">
     <strong>{{ partida.adversario }}</strong> - {{ partida.dataHora }} - {{ partida.local }}
-    <br>
+    <br />
     Placar: {{ partida.resultadoCasa }} x {{ partida.resultadoVisitante }}
-    <br>
+    <br />
     Palpites:
     <ul>
       <li *ngFor="let palpite of partida.palpites">
-        {{ palpite.nome }} - Torcedor: {{ palpite.torcedor.casa }} x {{ palpite.torcedor.visitante }}, Realista: {{ palpite.realista.casa }} x {{ palpite.realista.visitante }}
+        {{ palpite.nome }} - Torcedor: {{ palpite.torcedor.casa }} x {{ palpite.torcedor.visitante }},
+        Realista: {{ palpite.realista.casa }} x {{ palpite.realista.visitante }}
       </li>
     </ul>
+    <button (click)="editarPalpite(partida)">Editar Palpite</button>
   </li>
 </ul>

@@ -1,26 +1,2 @@
 <app-classificacao [classificacao]="classificacao"></app-classificacao>
-<section class="ranking-section">
-  <div class="ranking-card">
-    <h2 class="ranking-title">Classificação Geral</h2>
-    <div class="table-container">
-      <table class="ranking-table">
-        <thead>
-          <tr>
-            <th>Posição</th>
-            <th>Participante</th>
-            <th>Pontos</th>
-            <th>Acertos</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let participante of classificacao; index as i">
-            <td>{{ i + 1 }}</td>
-            <td class="nome">{{ participante.nome }}</td>
-            <td>{{ participante.pontos }}</td>
-            <td>{{ participante.acertos }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
+
