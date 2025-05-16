@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { PalpiteService } from 'src/app/services/palpite.service';
 
 @Component({
   selector: 'app-resultado-final',
@@ -13,6 +14,8 @@ export class ResultadoFinalComponent {
   resultadoCasa: string = '';
   resultadoVisitante: string = '';
   mensagensAcerto: string[] = [];
+
+  constructor(private palpiteService: PalpiteService) {}
 
   verificarResultado() {
     const casa = parseInt(this.resultadoCasa);
@@ -65,6 +68,11 @@ export class ResultadoFinalComponent {
       if (pontos > 0) {
         acertos[nome] = pontos;
       }
+    }
+
+    // 🔄 Salva no Firestore
+    for (const nome in acertos) {
+      this.palpiteService.atualizarRanking(nome, acertos[nome]);
     }
 
     if (Object.keys(acertos).length === 0) {

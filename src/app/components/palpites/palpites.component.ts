@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { PalpiteService } from 'src/app/services/palpite.service';
 
 @Component({
   selector: 'app-palpites',
@@ -16,6 +17,9 @@ export class PalpitesComponent implements OnChanges {
   palpites: any = {};
   mensagensErro: any = {};
   mensagensSucesso: any = {};
+
+  constructor(private palpiteService: PalpiteService) {}
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['palpiteiros'] && changes['palpiteiros'].currentValue) {
@@ -44,5 +48,13 @@ export class PalpitesComponent implements OnChanges {
     this.mensagensErro[nome] = '';
     this.mensagensSucesso[nome] = 'Palpites salvos com sucesso!';
     this.palpitesChange.emit(this.palpites);
+
+    const partidaId = `${this.adversario}-${this.dataHora}`.replace(/\s+/g, '_');
+
+    this.palpiteService.salvarPalpite(partidaId, nome, p)
+      .catch(() => {
+        this.mensagensErro[nome] = 'Erro ao salvar palpite na nuvem.';
+        this.mensagensSucesso[nome] = '';
+      });
   }
 }

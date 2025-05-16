@@ -27,8 +27,16 @@ export class LoginComponent {
     try {
       await this.auth.registrar(this.email, this.senha);
       this.router.navigate(['/']);
-    } catch (error) {
-      this.erro = 'Erro ao registrar. Talvez o e-mail já esteja em uso.';
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        this.erro = 'Este e-mail já está em uso.';
+      } else if (error.code === 'auth/invalid-email') {
+        this.erro = 'E-mail inválido.';
+      } else if (error.code === 'auth/weak-password') {
+        this.erro = 'Senha muito fraca. Use pelo menos 6 caracteres.';
+      } else {
+        this.erro = 'Erro ao registrar. Tente novamente.';
+      }
     }
   }
 }
