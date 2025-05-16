@@ -62,21 +62,17 @@ export class PalpiteService {
     await setDoc(ref, { ativo: true });
   }
 
-  async getRankingGrupo(): Promise<{ nome: string, pontos: number, acertos: number }[]> {
+  async getRankingGrupo(): Promise<{ nome: string; pontos: number; acertos: number }[]> {
     const uidGrupo = this.auth.getUidGrupo();
     if (!uidGrupo) throw new Error('Grupo não autenticado.');
 
     const rankingRef = collection(this.firestore, `grupos/${uidGrupo}/ranking`);
     const snapshot = await getDocs(rankingRef);
 
-    return snapshot.docs.map(doc => {
-      const data = doc.data() as any;
-      return {
-        nome: doc.id,
-        pontos: data.pontos || 0,
-        acertos: data.acertos || 0
-      };
-    });
+    return snapshot.docs.map(doc => ({
+      nome: doc.id,
+      ...(doc.data() as { pontos: number; acertos: number })
+    }));
   }
 
   async getPartidasConferidas(): Promise<any[]> {
