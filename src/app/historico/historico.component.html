@@ -2,20 +2,22 @@
   <h2>Histórico de Partidas Conferidas</h2>
 
   <div *ngFor="let partida of partidasConferidas" class="partida">
-    <strong>{{ partida.adversario }}</strong>
+    <strong>Corinthians x {{ partida.adversario }}</strong>
     <div><small>{{ partida.dataHora }} - {{ partida.local }}</small></div>
-    <div>Placar: {{ partida.resultadoCasa }} x {{ partida.resultadoVisitante }}</div>
+    <div><strong>Resultado:</strong> {{ partida.resultadoCasa }} x {{ partida.resultadoVisitante }}</div>
 
-    <div>
-      <strong>Palpites:</strong>
+    <div class="palpites-bloco">
+      <strong>Palpites registrados:</strong>
       <ul>
         <li *ngFor="let palpite of partida.palpites">
-          {{ palpite.nome }} - Torcedor: {{ palpite.torcedor.casa }} x {{ palpite.torcedor.visitante }},
+          <strong>{{ palpite.nome }}</strong><br>
+          Torcedor: {{ palpite.torcedor.casa }} x {{ palpite.torcedor.visitante }}<br>
           Realista: {{ palpite.realista.casa }} x {{ palpite.realista.visitante }}
         </li>
       </ul>
     </div>
 
     <button class="botao-editar" (click)="editarPartida(partida)">Editar Palpite</button>
+
   </div>
 </div>

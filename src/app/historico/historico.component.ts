@@ -20,6 +20,14 @@ export class HistoricoComponent implements OnInit {
   }
 
   editarPartida(partida: any) {
-    this.router.navigate(['/'], { state: { partida } });
+    this.router.navigate(['/'], {
+      state: {
+        partida: {
+          adversario: partida.adversario,
+          dataHora: partida.dataHora,
+          local: partida.local
+        }
+      }
+    });
   }
 }

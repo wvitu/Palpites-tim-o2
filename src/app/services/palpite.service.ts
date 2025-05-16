@@ -90,10 +90,21 @@ export class PalpiteService {
     const partidas: any[] = [];
     for (const docSnap of snapshot.docs) {
       const partida = docSnap.data();
-      const palpitesRef = collection(this.firestore, `grupos/${uidGrupo}/partidas/${docSnap.id}/palpites`);
+      const partidaId = docSnap.id;
+
+      const palpitesRef = collection(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}/palpites`);
       const palpitesSnap = await getDocs(palpitesRef);
       const palpites = palpitesSnap.docs.map(p => ({ nome: p.id, ...p.data() }));
-      partidas.push({ ...partida, palpites });
+
+      partidas.push({
+        id: partidaId,
+        adversario: partida['adversario'] || '',
+        dataHora: partida['dataHora'] || '',
+        local: partida['local'] || '',
+        resultadoCasa: partida['resultadoCasa'] || '',
+        resultadoVisitante: partida['resultadoVisitante'] || '',
+        palpites
+      });
     }
 
     return partidas;
