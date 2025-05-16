@@ -18,6 +18,7 @@ import { ClassificacaoComponent } from './components/classificacao-card/classifi
 import { InicioComponent } from './pages/inicio/inicio.component';
 import { ClassificacaoPageComponent } from './pages/classificacao/classificacao.component';
 import { LoginComponent } from './pages/login/login.component';
+import { HistoricoComponent } from './historico/historico.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { LoginComponent } from './pages/login/login.component';
     ClassificacaoComponent,
     InicioComponent,
     ClassificacaoPageComponent,
-    LoginComponent
+    LoginComponent,
+    HistoricoComponent
   ],
   imports: [
     BrowserModule,

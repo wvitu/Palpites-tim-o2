@@ -1,8 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where
+} from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
-import { collection, getDocs, addDoc } from '@angular/fire/firestore';
-
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +19,7 @@ export class PalpiteService {
 
   async salvarPalpite(partidaId: string, nomePalpiteiro: string, palpite: any) {
     const uidGrupo = this.auth.getUidGrupo();
-    if (!uidGrupo) {
-      throw new Error('Grupo não autenticado.');
-    }
+    if (!uidGrupo) throw new Error('Grupo não autenticado.');
 
     const ref = doc(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}/palpites/${nomePalpiteiro}`);
     await setDoc(ref, palpite, { merge: true });
@@ -38,39 +43,58 @@ export class PalpiteService {
     await setDoc(ref, dados);
   }
 
-async getMembrosGrupo(): Promise<string[]> {
-  const uidGrupo = this.auth.getUidGrupo();
-  if (!uidGrupo) throw new Error('Grupo não autenticado.');
+  async getMembrosGrupo(): Promise<string[]> {
+    const uidGrupo = this.auth.getUidGrupo();
+    if (!uidGrupo) throw new Error('Grupo não autenticado.');
 
-  const membrosRef = collection(this.firestore, `grupos/${uidGrupo}/membros`);
-  const snapshot = await getDocs(membrosRef);
+    const membrosRef = collection(this.firestore, `grupos/${uidGrupo}/membros`);
+    const snapshot = await getDocs(membrosRef);
 
-  return snapshot.docs.map(doc => doc.id);
-}
+    return snapshot.docs.map(doc => doc.id);
+  }
 
-async adicionarMembroGrupo(nome: string): Promise<void> {
-  const uidGrupo = this.auth.getUidGrupo();
-  if (!uidGrupo) throw new Error('Grupo não autenticado.');
+  async adicionarMembroGrupo(nome: string): Promise<void> {
+    const uidGrupo = this.auth.getUidGrupo();
+    if (!uidGrupo) throw new Error('Grupo não autenticado.');
 
-  const ref = doc(this.firestore, `grupos/${uidGrupo}/membros/${nome}`);
-  await setDoc(ref, { ativo: true });
-}
+    const ref = doc(this.firestore, `grupos/${uidGrupo}/membros/${nome}`);
+    await setDoc(ref, { ativo: true });
+  }
 
-async getRankingGrupo(): Promise<{ nome: string, pontos: number, acertos: number }[]> {
-  const uidGrupo = this.auth.getUidGrupo();
-  if (!uidGrupo) throw new Error('Grupo não autenticado.');
+  async getRankingGrupo(): Promise<{ nome: string, pontos: number, acertos: number }[]> {
+    const uidGrupo = this.auth.getUidGrupo();
+    if (!uidGrupo) throw new Error('Grupo não autenticado.');
 
-  const rankingRef = collection(this.firestore, `grupos/${uidGrupo}/ranking`);
-  const snapshot = await getDocs(rankingRef);
+    const rankingRef = collection(this.firestore, `grupos/${uidGrupo}/ranking`);
+    const snapshot = await getDocs(rankingRef);
 
-  return snapshot.docs.map(doc => {
-    const data = doc.data() as any;
-    return {
-      nome: doc.id,
-      pontos: data.pontos || 0,
-      acertos: data.acertos || 0
-    };
-  });
-}
+    return snapshot.docs.map(doc => {
+      const data = doc.data() as any;
+      return {
+        nome: doc.id,
+        pontos: data.pontos || 0,
+        acertos: data.acertos || 0
+      };
+    });
+  }
 
+  async getPartidasConferidas(): Promise<any[]> {
+    const uidGrupo = this.auth.getUidGrupo();
+    if (!uidGrupo) throw new Error('Grupo não autenticado.');
+
+    const partidasRef = collection(this.firestore, `grupos/${uidGrupo}/partidas`);
+    const q = query(partidasRef, where('verificado', '==', true));
+    const snapshot = await getDocs(q);
+
+    const partidas: any[] = [];
+    for (const docSnap of snapshot.docs) {
+      const partida = docSnap.data();
+      const palpitesRef = collection(this.firestore, `grupos/${uidGrupo}/partidas/${docSnap.id}/palpites`);
+      const palpitesSnap = await getDocs(palpitesRef);
+      const palpites = palpitesSnap.docs.map(p => ({ nome: p.id, ...p.data() }));
+      partidas.push({ ...partida, palpites });
+    }
+
+    return partidas;
+  }
 }
