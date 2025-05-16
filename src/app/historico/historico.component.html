@@ -1,17 +1,21 @@
-<h2>Histórico de Partidas Conferidas</h2>
-<ul>
-  <li *ngFor="let partida of partidasConferidas">
-    <strong>{{ partida.adversario }}</strong> - {{ partida.dataHora }} - {{ partida.local }}
-    <br />
-    Placar: {{ partida.resultadoCasa }} x {{ partida.resultadoVisitante }}
-    <br />
-    Palpites:
-    <ul>
-      <li *ngFor="let palpite of partida.palpites">
-        {{ palpite.nome }} - Torcedor: {{ palpite.torcedor.casa }} x {{ palpite.torcedor.visitante }},
-        Realista: {{ palpite.realista.casa }} x {{ palpite.realista.visitante }}
-      </li>
-    </ul>
-    <button (click)="editarPalpite(partida)">Editar Palpite</button>
-  </li>
-</ul>
+<div class="historico-container">
+  <h2>Histórico de Partidas Conferidas</h2>
+
+  <div *ngFor="let partida of partidasConferidas" class="partida">
+    <strong>{{ partida.adversario }}</strong>
+    <div><small>{{ partida.dataHora }} - {{ partida.local }}</small></div>
+    <div>Placar: {{ partida.resultadoCasa }} x {{ partida.resultadoVisitante }}</div>
+
+    <div>
+      <strong>Palpites:</strong>
+      <ul>
+        <li *ngFor="let palpite of partida.palpites">
+          {{ palpite.nome }} - Torcedor: {{ palpite.torcedor.casa }} x {{ palpite.torcedor.visitante }},
+          Realista: {{ palpite.realista.casa }} x {{ palpite.realista.visitante }}
+        </li>
+      </ul>
+    </div>
+
+    <button class="botao-editar" (click)="editarPartida(partida)">Editar Palpite</button>
+  </div>
+</div>
