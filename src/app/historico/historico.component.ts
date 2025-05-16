@@ -23,6 +23,7 @@ export class HistoricoComponent implements OnInit {
     this.router.navigate(['/'], {
       state: {
         partida: {
+          id: partida.id,
           adversario: partida.adversario,
           dataHora: partida.dataHora,
           local: partida.local

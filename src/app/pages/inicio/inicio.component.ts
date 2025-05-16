@@ -11,6 +11,7 @@ export class InicioComponent implements OnInit {
   adversario: string = '';
   dataHora: string = '';
   local: string = '';
+  partidaId: string = '';
   palpiteiros: string[] = [];
   palpitesRef: any = {};
   pontuacao: { [nome: string]: { pontos: number; acertos: number } } = {};
@@ -25,6 +26,7 @@ export class InicioComponent implements OnInit {
       this.adversario = state.partida.adversario;
       this.dataHora = state.partida.dataHora;
       this.local = state.partida.local;
+      this.partidaId = state.partida.id || '';
     }
 
     this.palpiteiros = await this.palpiteService.getMembrosGrupo();
@@ -37,11 +39,6 @@ export class InicioComponent implements OnInit {
         acertos: item.acertos
       };
     }
-  }
-
-
-  async carregarPalpiteiros() {
-    this.palpiteiros = await this.palpiteService.getMembrosGrupo();
   }
 
   atualizarJogo(info: { adversario: string, dataHora: string, local: string }) {
