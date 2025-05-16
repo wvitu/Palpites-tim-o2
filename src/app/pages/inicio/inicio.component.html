@@ -12,6 +12,10 @@
   (palpitesChange)="receberPalpites($event)"
 ></app-palpites>
 
+<div *ngIf="partidaId" class="alert-edicao">
+  <strong>Modo de Edição:</strong> Você está editando uma partida já registrada. Os palpites anteriores serão substituídos.
+</div>
+
 <app-resultado-final
   [palpiteiros]="palpiteiros"
   [palpites]="palpitesRef"
