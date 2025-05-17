@@ -170,5 +170,4 @@ export class PalpiteService {
       admin
     });
   }
-
 }
