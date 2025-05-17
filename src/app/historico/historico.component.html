@@ -21,7 +21,7 @@
       {{ partida.resultadoCasa ?? '-' }} x {{ partida.resultadoVisitante ?? '-' }}
     </div>
 
-    <div class="palpites-bloco" *ngIf="partida.palpites?.length > 0; else semPalpites">
+    <div class="palpites-bloco" *ngIf="partida.palpites && partida.palpites.length > 0; else semPalpites">
       <strong>Palpites registrados:</strong>
       <ul>
         <li *ngFor="let palpite of partida.palpites">

@@ -13,6 +13,8 @@ export class HistoricoComponent implements OnInit {
   constructor(private palpiteService: PalpiteService, private router: Router) {}
 
   async ngOnInit() {
+    console.log('Partidas conferidas:', this.partidasConferidas);
+
     const partidas = await this.palpiteService.getPartidasConferidas();
     this.partidasConferidas = partidas.sort((a, b) =>
       new Date(b.dataHora).getTime() - new Date(a.dataHora).getTime()
