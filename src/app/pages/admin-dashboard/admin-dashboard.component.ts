@@ -16,7 +16,7 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private palpiteService: PalpiteService,
-    private auth: AuthService
+    public auth: AuthService
   ) {}
 
   async ngOnInit() {
