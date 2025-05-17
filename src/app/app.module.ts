@@ -20,6 +20,7 @@ import { ClassificacaoPageComponent } from './pages/classificacao/classificacao.
 import { LoginComponent } from './pages/login/login.component';
 import { HistoricoComponent } from './historico/historico.component';
 import { RouterModule } from '@angular/router';
+import { EditarPalpiteCardComponent } from './components/editar-palpite-card/editar-palpite-card.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { RouterModule } from '@angular/router';
     InicioComponent,
     ClassificacaoPageComponent,
     LoginComponent,
-    HistoricoComponent
+    HistoricoComponent,
+    EditarPalpiteCardComponent
   ],
   imports: [
     BrowserModule,

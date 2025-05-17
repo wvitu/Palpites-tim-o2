@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { PalpiteService } from '../services/palpite.service';
 
 @Component({
@@ -9,30 +8,27 @@ import { PalpiteService } from '../services/palpite.service';
 })
 export class HistoricoComponent implements OnInit {
   partidasConferidas: any[] = [];
+  partidaSelecionada: any = null;
 
-  constructor(private palpiteService: PalpiteService, private router: Router) {}
+  constructor(private palpiteService: PalpiteService) {}
 
-  async ngOnInit() {
-    console.log('Partidas conferidas:', this.partidasConferidas);
-
-    const partidas = await this.palpiteService.getPartidasConferidas();
-    this.partidasConferidas = partidas.sort((a, b) =>
-      new Date(b.dataHora).getTime() - new Date(a.dataHora).getTime()
-    );
+  ngOnInit(): void {
+    this.carregarHistorico();
   }
 
-  editarPartida(partida: any) {
-    this.router.navigate(['/'], {
-      state: {
-        partida: {
-          id: partida.id,
-          adversario: partida.adversario,
-          dataHora: partida.dataHora,
-          local: partida.local,
-          palpites: partida.palpites
-        }
-      }
+  carregarHistorico(): void {
+    this.palpiteService.getPartidasConferidas().then(partidas => {
+      this.partidasConferidas = partidas.sort((a, b) =>
+        new Date(b.dataHora).getTime() - new Date(a.dataHora).getTime()
+      );
     });
   }
 
+  abrirEdicao(partida: any): void {
+    this.partidaSelecionada = partida;
+  }
+
+  fecharEdicao(): void {
+    this.partidaSelecionada = null;
+  }
 }

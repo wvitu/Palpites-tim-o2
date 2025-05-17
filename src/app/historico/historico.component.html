@@ -11,6 +11,7 @@
     </strong>
 
     <div>
+
       <small>
         {{ partida.dataHora || 'Data não informada' }} - {{ partida.local || 'Local não informado' }}
       </small>
@@ -36,8 +37,15 @@
       <p>Nenhum palpite registrado.</p>
     </ng-template>
 
-    <button class="botao-editar" (click)="editarPartida(partida)">
+    <button class="botao-editar" (click)="abrirEdicao(partida)">
       Editar Palpite
     </button>
   </div>
+  <app-editar-palpite-card
+  *ngIf="partidaSelecionada"
+  [partida]="partidaSelecionada"
+  (fechar)="fecharEdicao()"
+  (atualizar)="carregarHistorico()">
+</app-editar-palpite-card>
+
 </div>

@@ -1,19 +1,18 @@
-import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnChanges, OnInit, SimpleChanges, EventEmitter } from '@angular/core';
 import { PalpiteService } from 'src/app/services/palpite.service';
-
 
 @Component({
   selector: 'app-palpites',
   templateUrl: './palpites.component.html',
   styleUrls: ['./palpites.component.css']
 })
-export class PalpitesComponent implements OnChanges {
+export class PalpitesComponent implements OnInit, OnChanges {
   @Input() palpitesPreCarregados: any = {};
   @Input() adversario: string = '';
   @Input() dataHora: string = '';
   @Input() local: string = '';
   @Input() palpiteiros: string[] = [];
-  @Input() partidaId: string = ''; // Deve vir do componente pai!
+  @Input() partidaId: string = '';
   @Output() palpitesChange = new EventEmitter<any>();
 
   palpites: any = {};
@@ -23,11 +22,24 @@ export class PalpitesComponent implements OnChanges {
 
   constructor(private palpiteService: PalpiteService) {}
 
+  ngOnInit(): void {
+    // Aplica palpites pré-carregados ao iniciar
+    for (const nome of this.palpiteiros) {
+      if (!this.palpites[nome]) {
+        this.palpites[nome] = this.palpitesPreCarregados[nome] || {
+          torcedor: { casa: '', visitante: '' },
+          realista: { casa: '', visitante: '' }
+        };
+        this.mensagensErro[nome] = '';
+        this.mensagensSucesso[nome] = '';
+      }
+    }
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['palpiteiros'] && changes['palpiteiros'].currentValue) {
       for (const nome of this.palpiteiros) {
         if (!this.palpites[nome]) {
-          // Usa os palpites já existentes se tiver
           this.palpites[nome] = this.palpitesPreCarregados[nome] || {
             torcedor: { casa: '', visitante: '' },
             realista: { casa: '', visitante: '' }
@@ -38,7 +50,6 @@ export class PalpitesComponent implements OnChanges {
       }
     }
   }
-
 
   async salvarPalpites(nome: string) {
     const p = this.palpites[nome];
@@ -55,11 +66,20 @@ export class PalpitesComponent implements OnChanges {
       this.partidaId = this.gerarIdPartida();
     }
 
+    this.salvando[nome] = true;
     this.mensagensErro[nome] = '';
-    this.mensagensSucesso[nome] = 'Palpites salvos com sucesso!';
-    this.palpitesChange.emit(this.palpites);
+    this.mensagensSucesso[nome] = '';
 
-    await this.palpiteService.salvarPalpite(this.partidaId, nome, p);
+    try {
+      await this.palpiteService.salvarPalpite(this.partidaId, nome, p);
+      this.mensagensSucesso[nome] = 'Palpites salvos com sucesso!';
+      this.palpitesChange.emit(this.palpites);
+    } catch (error) {
+      console.error('Erro ao salvar palpite:', error);
+      this.mensagensErro[nome] = 'Erro ao salvar palpite.';
+    } finally {
+      this.salvando[nome] = false;
+    }
   }
 
   private gerarIdPartida(): string {

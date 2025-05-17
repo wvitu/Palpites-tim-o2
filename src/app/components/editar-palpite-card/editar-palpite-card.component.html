@@ -1,0 +1,25 @@
+<div class="card-flutuante">
+  <h3>Editar Palpite - {{ partida?.adversario }}</h3>
+  <p><small>{{ partida?.dataHora }} - {{ partida?.local }}</small></p>
+
+  <app-palpites
+    [adversario]="partida?.adversario"
+    [dataHora]="partida?.dataHora"
+    [local]="partida?.local"
+    [palpiteiros]="getPalpiteiros()"
+    [partidaId]="partida?.id"
+    [palpitesPreCarregados]="mapearPalpites()"
+    (palpitesChange)="onPalpitesAtualizados($event)">
+  </app-palpites>
+
+  <app-resultado-final
+    [adversario]="partida?.adversario"
+    [dataHora]="partida?.dataHora"
+    [local]="partida?.local"
+    [palpiteiros]="getPalpiteiros()"
+    [palpites]="palpites"
+    (pontuacoesAtualizadas)="onPontuacoesAtualizadas($event)">
+  </app-resultado-final>
+
+  <button (click)="fecharCard()">Fechar</button>
+</div>
