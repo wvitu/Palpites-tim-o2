@@ -18,9 +18,13 @@
 </div>
 
 <app-resultado-final
-  [palpiteiros]="palpiteiros"
   [palpites]="palpitesRef"
+  [palpiteiros]="palpiteiros"
+  [adversario]="adversario"
+  [dataHora]="dataHora"
+  [local]="local"
   (pontuacoesAtualizadas)="atualizarPontuacao($event)">
 </app-resultado-final>
+
 <app-classificacao [classificacao]="getClassificacao()"></app-classificacao>
 
