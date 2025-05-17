@@ -19,7 +19,7 @@ export class PalpiteService {
   constructor(private firestore: Firestore, private auth: AuthService) {}
 
   getUidGrupo(): string | null {
-    return this.auth.getUidGrupo();
+    return this.auth.getGrupoId();
   }
 
   private getUidGrupoOrThrow(): string {

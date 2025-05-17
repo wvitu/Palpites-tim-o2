@@ -15,4 +15,14 @@
   </form>
 
   <p *ngIf="erro" class="erro-msg">{{ erro }}</p>
+
+  <form (ngSubmit)="login()">
+    <!-- campos de login -->
+    <button type="submit">Entrar</button>
+  </form>
+
+  <button (click)="cadastrarNovoClube()">Cadastrar novo clube</button>
+
+  <p *ngIf="erro" class="erro-msg">{{ erro }}</p>
+
 </div>

@@ -1,49 +1,34 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private usuario: { nome: string; admin: boolean; uidGrupo: string } | null = null;
+  usuario: string = '';
+  admin: boolean = false;
+  grupoId: string = '';
 
-  constructor() {
-    const usuarioSalvo = localStorage.getItem('usuario');
-    if (usuarioSalvo) {
-      this.usuario = JSON.parse(usuarioSalvo);
-    }
-  }
-
-  setUsuario(nome: string, admin: boolean, uidGrupo: string): void {
-    this.usuario = { nome, admin, uidGrupo };
-    localStorage.setItem('usuario', JSON.stringify(this.usuario));
-  }
-
-  getUsuario(): { nome: string; admin: boolean; uidGrupo: string } | null {
-    if (!this.usuario) {
-      const local = localStorage.getItem('usuario');
-      this.usuario = local ? JSON.parse(local) : null;
-    }
-    return this.usuario;
-  }
-
-  getUidGrupo(): string | null {
-    return this.getUsuario()?.uidGrupo || null;
-  }
-
-  getNome(): string | null {
-    return this.getUsuario()?.nome || null;
+  setUsuario(usuario: string, admin: boolean, grupoId: string) {
+    this.usuario = usuario;
+    this.admin = admin;
+    this.grupoId = grupoId;
   }
 
   isAdmin(): boolean {
-    return this.getUsuario()?.admin === true;
+    return this.admin;
   }
 
-  isAutenticado(): boolean {
-    return !!this.getUsuario();
+  getGrupoId(): string {
+    return this.grupoId;
   }
 
-  logout(): void {
-    this.usuario = null;
-    localStorage.removeItem('usuario');
+  getUsuario(): string {
+    return this.usuario;
+  }
+
+  logout() {
+    this.usuario = '';
+    this.admin = false;
+    this.grupoId = '';
   }
 }

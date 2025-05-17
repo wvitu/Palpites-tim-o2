@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -33,10 +33,34 @@ export class LoginComponent {
       }
 
       this.auth.setUsuario(this.nome, data['admin'] === true, this.grupoId);
-      this.router.navigate(['/']); // Redireciona para a tela inicial
+      this.router.navigate(['/']);
     } catch (e) {
       console.error(e);
       this.erro = 'Erro ao autenticar. Tente novamente.';
+    }
+  }
+
+  async cadastrarNovoClube() {
+    if (!this.grupoId || !this.nome || !this.senha) {
+      this.erro = 'Preencha todos os campos para criar o clube.';
+      return;
+    }
+
+    try {
+      const clubeRef = doc(this.firestore, `grupos/${this.grupoId}`);
+      const membroRef = doc(this.firestore, `grupos/${this.grupoId}/membros/${this.nome}`);
+
+      await setDoc(clubeRef, { criadoEm: new Date() });
+      await setDoc(membroRef, {
+        senha: this.senha,
+        admin: true,
+      });
+
+      this.auth.setUsuario(this.nome, true, this.grupoId);
+      this.router.navigate(['/']);
+    } catch (e) {
+      console.error(e);
+      this.erro = 'Erro ao cadastrar o clube.';
     }
   }
 }

@@ -99,7 +99,7 @@ export class ResultadoFinalComponent {
     this.pontuacoesAtualizadas.emit(acertos);
 
     // 🔒 Salvar resultado da partida
-    const uidGrupo = this.auth.getUidGrupo();
+    const uidGrupo =this.auth.getGrupoId();
     if (!uidGrupo) {
       console.error('Grupo não autenticado');
       return;
