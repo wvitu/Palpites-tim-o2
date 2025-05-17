@@ -28,7 +28,8 @@ export class HistoricoComponent implements OnInit {
           id: partida.id,
           adversario: partida.adversario,
           dataHora: partida.dataHora,
-          local: partida.local
+          local: partida.local,
+          palpites: partida.palpites
         }
       }
     });

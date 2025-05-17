@@ -1,12 +1,14 @@
 import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { PalpiteService } from 'src/app/services/palpite.service';
 
+
 @Component({
   selector: 'app-palpites',
   templateUrl: './palpites.component.html',
   styleUrls: ['./palpites.component.css']
 })
 export class PalpitesComponent implements OnChanges {
+  @Input() palpitesPreCarregados: any = {};
   @Input() adversario: string = '';
   @Input() dataHora: string = '';
   @Input() local: string = '';
@@ -25,7 +27,8 @@ export class PalpitesComponent implements OnChanges {
     if (changes['palpiteiros'] && changes['palpiteiros'].currentValue) {
       for (const nome of this.palpiteiros) {
         if (!this.palpites[nome]) {
-          this.palpites[nome] = {
+          // Usa os palpites já existentes se tiver
+          this.palpites[nome] = this.palpitesPreCarregados[nome] || {
             torcedor: { casa: '', visitante: '' },
             realista: { casa: '', visitante: '' }
           };
@@ -35,6 +38,7 @@ export class PalpitesComponent implements OnChanges {
       }
     }
   }
+
 
   async salvarPalpites(nome: string) {
     const p = this.palpites[nome];

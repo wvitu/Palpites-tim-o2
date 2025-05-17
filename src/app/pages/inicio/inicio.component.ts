@@ -28,14 +28,17 @@ export class InicioComponent implements OnInit {
       this.dataHora = state.partida.dataHora || '';
       this.local = state.partida.local || '';
       this.partidaId = state.partida.id || '';
+
+      // 👇 Repassa os palpites existentes, se houver
+      if (state.partida.palpites) {
+        this.palpiteiros = Object.keys(state.partida.palpites);
+        this.palpitesRef = state.partida.palpites;
+      }
     } else {
-      console.warn('Nenhuma partida carregada do estado de navegação');
+      this.palpiteiros = await this.palpiteService.getMembrosGrupo();
     }
 
-    // Carrega membros e ranking
-    this.palpiteiros = await this.palpiteService.getMembrosGrupo();
     const ranking = await this.palpiteService.getRankingGrupo();
-
     this.pontuacao = {};
     for (const item of ranking) {
       this.pontuacao[item.nome] = {
@@ -44,6 +47,7 @@ export class InicioComponent implements OnInit {
       };
     }
   }
+
 
 
   atualizarJogo(info: { adversario: string, dataHora: string, local: string }) {
