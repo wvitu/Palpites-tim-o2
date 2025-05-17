@@ -10,5 +10,6 @@
     <button routerLink="/">Início</button>
     <button routerLink="/classificacao">Classificação</button>
     <button routerLink="/historico">Histórico</button>
+    <button *ngIf="isAdmin" routerLink="/admin">Meu Clube</button>
   </nav>
 </header>
