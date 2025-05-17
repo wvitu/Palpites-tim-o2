@@ -12,7 +12,7 @@ export class ClassificacaoPageComponent implements OnInit {
   constructor(private palpiteService: PalpiteService) {}
 
   async ngOnInit(): Promise<void> {
-    this.classificacao = await this.palpiteService.getRankingGrupo();
+    this.classificacao = await this.palpiteService.getRankingAPartirDoHistorico();
 
     // Ordenar por pontuação e depois acertos
     this.classificacao.sort((a, b) => b.pontos - a.pontos || b.acertos - a.acertos);

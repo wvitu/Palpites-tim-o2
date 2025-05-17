@@ -31,4 +31,16 @@ export class HistoricoComponent implements OnInit {
   fecharEdicao(): void {
     this.partidaSelecionada = null;
   }
+  async excluirPartida(partida: any): Promise<void> {
+    const confirmacao = confirm(`Tem certeza que deseja excluir a partida contra ${partida.adversario}?`);
+    if (!confirmacao) return;
+
+    try {
+      await this.palpiteService.excluirPartida(partida.id);
+      this.carregarHistorico();
+    } catch (erro) {
+      console.error('Erro ao excluir partida:', erro);
+      alert('Não foi possível excluir a partida. Veja o console para detalhes.');
+    }
+  }
 }

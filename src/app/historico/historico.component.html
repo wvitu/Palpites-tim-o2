@@ -40,6 +40,9 @@
     <button class="botao-editar" (click)="abrirEdicao(partida)">
       Editar Palpite
     </button>
+    <button class="botao-excluir" (click)="excluirPartida(partida)">
+      Excluir Partida
+    </button>
   </div>
   <app-editar-palpite-card
   *ngIf="partidaSelecionada"

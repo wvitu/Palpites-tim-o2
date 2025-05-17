@@ -38,7 +38,7 @@ export class InicioComponent implements OnInit {
       this.palpiteiros = await this.palpiteService.getMembrosGrupo();
     }
 
-    const ranking = await this.palpiteService.getRankingGrupo();
+    const ranking = await this.palpiteService.getRankingAPartirDoHistorico();
     this.pontuacao = {};
     for (const item of ranking) {
       this.pontuacao[item.nome] = {
