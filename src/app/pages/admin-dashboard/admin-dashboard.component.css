@@ -1,0 +1,35 @@
+.admin-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+
+.form-bloco {
+  margin-bottom: 24px;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+button {
+  background-color: black;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.erro-msg {
+  color: red;
+  font-weight: bold;
+}
+
+.sucesso-msg {
+  color: green;
+  font-weight: bold;
+}

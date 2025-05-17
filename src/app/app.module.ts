@@ -21,6 +21,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { HistoricoComponent } from './historico/historico.component';
 import { RouterModule } from '@angular/router';
 import { EditarPalpiteCardComponent } from './components/editar-palpite-card/editar-palpite-card.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { EditarPalpiteCardComponent } from './components/editar-palpite-card/edi
     ClassificacaoPageComponent,
     LoginComponent,
     HistoricoComponent,
-    EditarPalpiteCardComponent
+    EditarPalpiteCardComponent,
+    AdminDashboardComponent
   ],
   imports: [
     BrowserModule,

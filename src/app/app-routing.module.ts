@@ -5,9 +5,12 @@ import { ClassificacaoPageComponent } from './pages/classificacao/classificacao.
 import { LoginComponent } from './pages/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { HistoricoComponent } from './historico/historico.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+
 
 
 const routes: Routes = [
+  { path: 'admin', component: AdminDashboardComponent, canActivate: [AuthGuard] },
   { path: '', component: InicioComponent, canActivate: [AuthGuard] },
   { path: 'classificacao', component: ClassificacaoPageComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },

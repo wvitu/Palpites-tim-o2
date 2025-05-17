@@ -1,0 +1,27 @@
+<div class="admin-container" *ngIf="auth.isAdmin(); else acessoNegado">
+  <h2>Painel do Administrador</h2>
+
+  <div class="form-bloco">
+    <label>Nome do Novo Membro:</label>
+    <input [(ngModel)]="nome" placeholder="Ex: Joao" />
+
+    <label>Senha:</label>
+    <input [(ngModel)]="senha" type="password" />
+
+    <button (click)="adicionarMembro()">Adicionar Membro</button>
+  </div>
+
+  <p *ngIf="erro" class="erro-msg">{{ erro }}</p>
+  <p *ngIf="sucesso" class="sucesso-msg">{{ sucesso }}</p>
+
+  <h3>Membros do Clube:</h3>
+  <ul>
+    <li *ngFor="let m of membros">
+      {{ m.nome }} <span *ngIf="m.admin"> (admin)</span>
+    </li>
+  </ul>
+</div>
+
+<ng-template #acessoNegado>
+  <p>Acesso negado. Você precisa ser administrador para visualizar esta página.</p>
+</ng-template>
