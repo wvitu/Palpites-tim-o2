@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PalpiteService } from 'src/app/services/palpite.service';
+import { AuthService } from 'src/app/services/auth.service'; 
 
 @Component({
   selector: 'app-inicio',
@@ -17,7 +18,7 @@ export class InicioComponent implements OnInit {
   palpitesRef: any = {};
   pontuacao: { [nome: string]: { pontos: number; acertos: number } } = {};
 
-  constructor(private router: Router, private palpiteService: PalpiteService) {}
+  constructor(private router: Router, private palpiteService: PalpiteService, public authService: AuthService) {}
 
   async ngOnInit(): Promise<void> {
     const navigation = this.router.getCurrentNavigation();
@@ -35,9 +36,12 @@ export class InicioComponent implements OnInit {
         this.palpitesRef = state.partida.palpites;
       }
     } else {
-      this.palpiteiros = await this.palpiteService.getMembrosGrupo();
+      // ⚠️ AQUI: Corrige para pegar só os nomes dos membros
+      const membros = await this.palpiteService.getMembrosGrupo();
+      this.palpiteiros = membros.map(m => m.nome);
     }
 
+    // ✅ Ranking baseado apenas nas partidas verificadas
     const ranking = await this.palpiteService.getRankingAPartirDoHistorico();
     this.pontuacao = {};
     for (const item of ranking) {
@@ -47,8 +51,6 @@ export class InicioComponent implements OnInit {
       };
     }
   }
-
-
 
   atualizarJogo(info: { adversario: string, dataHora: string, local: string }) {
     this.adversario = info.adversario;

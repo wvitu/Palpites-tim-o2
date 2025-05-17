@@ -15,6 +15,7 @@ export class ResultadoFinalComponent {
   @Input() dataHora: string = '';
   @Input() local: string = '';
   @Output() pontuacoesAtualizadas = new EventEmitter<{ [nome: string]: number }>();
+  @Input() isAdmin: boolean = false;
 
   resultadoCasa: string = '';
   resultadoVisitante: string = '';
@@ -29,6 +30,11 @@ export class ResultadoFinalComponent {
   async verificarResultado() {
     const casa = parseInt(this.resultadoCasa);
     const visitante = parseInt(this.resultadoVisitante);
+
+    if (!this.isAdmin) {
+      alert('Apenas o administrador pode verificar o resultado.');
+      return;
+    }
 
     if (isNaN(casa) || isNaN(visitante)) {
       alert('Preencha os dois campos do resultado com números.');

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -8,35 +9,34 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  email: string = '';
+  grupoId: string = '';
+  nome: string = '';
   senha: string = '';
   erro: string = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private firestore: Firestore, private auth: AuthService, private router: Router) {}
 
-  async entrar() {
+  async login() {
     try {
-      await this.auth.login(this.email, this.senha);
-      this.router.navigate(['/']);
-    } catch (error) {
-      this.erro = 'Login falhou. Verifique e-mail e senha.';
-    }
-  }
+      const ref = doc(this.firestore, `grupos/${this.grupoId}/membros/${this.nome}`);
+      const snap = await getDoc(ref);
 
-  async registrar() {
-    try {
-      await this.auth.registrar(this.email, this.senha);
-      this.router.navigate(['/']);
-    } catch (error: any) {
-      if (error.code === 'auth/email-already-in-use') {
-        this.erro = 'Este e-mail já está em uso.';
-      } else if (error.code === 'auth/invalid-email') {
-        this.erro = 'E-mail inválido.';
-      } else if (error.code === 'auth/weak-password') {
-        this.erro = 'Senha muito fraca. Use pelo menos 6 caracteres.';
-      } else {
-        this.erro = 'Erro ao registrar. Tente novamente.';
+      if (!snap.exists()) {
+        this.erro = 'Usuário não encontrado.';
+        return;
       }
+
+      const data = snap.data();
+      if (data['senha'] !== this.senha) {
+        this.erro = 'Senha incorreta.';
+        return;
+      }
+
+      this.auth.setUsuario(this.nome, data['admin'] === true, this.grupoId);
+      this.router.navigate(['/']); // Redireciona para a tela inicial
+    } catch (e) {
+      console.error(e);
+      this.erro = 'Erro ao autenticar. Tente novamente.';
     }
   }
 }

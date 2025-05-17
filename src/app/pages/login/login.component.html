@@ -1,18 +1,18 @@
 <div class="login-container">
-  <div class="fundo-escuro"></div>
+  <h2>Entrar no Clube de Palpites</h2>
 
-  <div class="login-box">
-    <div class="titulo-wrapper">
-      <img src="/assets/corinthians-logo.png" alt="Corinthians" class="logo-bg" />
-      <h2 class="titulo-login">Login Bando de Loucos</h2>
-    </div>
+  <form (ngSubmit)="login()">
+    <label>ID do Clube</label>
+    <input type="text" [(ngModel)]="grupoId" name="grupoId" required />
 
-    <input type="email" placeholder="E-mail do grupo" [(ngModel)]="email" />
-    <input type="password" placeholder="Senha" [(ngModel)]="senha" />
+    <label>Seu nome</label>
+    <input type="text" [(ngModel)]="nome" name="nome" required />
 
-    <button (click)="entrar()">Entrar</button>
-    <button (click)="registrar()">Registrar novo grupo</button>
+    <label>Senha</label>
+    <input type="password" [(ngModel)]="senha" name="senha" required />
 
-    <p *ngIf="erro" class="erro">{{ erro }}</p>
-  </div>
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p *ngIf="erro" class="erro-msg">{{ erro }}</p>
 </div>

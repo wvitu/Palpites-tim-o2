@@ -50,18 +50,18 @@ export class PalpiteService {
     await setDoc(ref, dados);
   }
 
-  async getMembrosGrupo(): Promise<string[]> {
+  async getMembrosGrupo(): Promise<{ nome: string; admin: boolean }[]> {
     const uidGrupo = this.getUidGrupoOrThrow();
     const membrosRef = collection(this.firestore, `grupos/${uidGrupo}/membros`);
     const snapshot = await getDocs(membrosRef);
 
-    return snapshot.docs.map(doc => doc.id);
-  }
-
-  async adicionarMembroGrupo(nome: string): Promise<void> {
-    const uidGrupo = this.getUidGrupoOrThrow();
-    const ref = doc(this.firestore, `grupos/${uidGrupo}/membros/${nome}`);
-    await setDoc(ref, { ativo: true });
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        nome: doc.id,
+        admin: data['admin'] || false
+      };
+    });
   }
 
   async getRankingAPartirDoHistorico(): Promise<{ nome: string; pontos: number; acertos: number }[]> {
@@ -160,6 +160,15 @@ export class PalpiteService {
     // Exclui o documento da partida
     const partidaRef = doc(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}`);
     await deleteDoc(partidaRef);
+  }
+
+  async adicionarMembroGrupo(nome: string, senha: string, admin: boolean = false): Promise<void>{
+    const uidGrupo = this.getUidGrupoOrThrow();
+    const ref = doc(this.firestore, `grupos/${uidGrupo}/membros/${nome}`);
+    await setDoc(ref, {
+      senha,
+      admin
+    });
   }
 
 }
