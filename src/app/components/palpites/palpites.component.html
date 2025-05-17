@@ -3,42 +3,50 @@
 
   <div class="palpites-grid">
     <div class="palpite-card" *ngFor="let nome of palpiteiros">
+      <!-- Header com avatar -->
       <div class="card-header">
         <div class="avatar">{{ nome.charAt(0).toUpperCase() }}</div>
         <h3 class="user-name">{{ nome }}</h3>
       </div>
 
+      <!-- Informações da partida -->
       <div class="palpite-block">
         <label>Adversário: {{ adversario }}</label><br />
         <small>{{ dataHora }} - {{ local }}</small>
       </div>
 
+      <!-- Palpite Torcedor -->
       <div class="palpite-block">
         <label>Palpite Torcedor</label>
         <div class="placar-input">
-          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.casa" name="tc-{{ nome }}" />
+          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.casa" name="tc-{{ nome }}" placeholder="Corinthians" />
           <span>x</span>
-          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.visitante" name="tv-{{ nome }}" />
+          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.visitante" name="tv-{{ nome }}" placeholder="{{ adversario }}" />
         </div>
         <div *ngIf="palpites[nome].torcedor.casa !== ''">
           <small>Salvo: {{ palpites[nome].torcedor.casa }} x {{ palpites[nome].torcedor.visitante }}</small>
         </div>
       </div>
 
+      <!-- Palpite Realista -->
       <div class="palpite-block">
         <label>Palpite Realista</label>
         <div class="placar-input">
-          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.casa" name="rc-{{ nome }}" />
+          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.casa" name="rc-{{ nome }}" placeholder="Corinthians" />
           <span>x</span>
-          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.visitante" name="rv-{{ nome }}" />
+          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.visitante" name="rv-{{ nome }}" placeholder="{{ adversario }}" />
         </div>
         <div *ngIf="palpites[nome].realista.casa !== ''">
           <small>Salvo: {{ palpites[nome].realista.casa }} x {{ palpites[nome].realista.visitante }}</small>
         </div>
       </div>
 
-      <button class="btn-salvar" (click)="salvarPalpites(nome)">Salvar Palpites</button>
+      <!-- Botão de salvar -->
+      <button class="btn-salvar" [disabled]="salvando[nome]" (click)="salvarPalpites(nome)">
+        {{ salvando[nome] ? 'Salvando...' : 'Salvar Palpites' }}
+      </button>
 
+      <!-- Mensagens de feedback -->
       <div *ngIf="mensagensErro[nome]" class="msg-erro">{{ mensagensErro[nome] }}</div>
       <div *ngIf="mensagensSucesso[nome]" class="msg-sucesso">{{ mensagensSucesso[nome] }}</div>
     </div>

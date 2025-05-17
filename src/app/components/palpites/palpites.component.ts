@@ -17,6 +17,7 @@ export class PalpitesComponent implements OnChanges {
   palpites: any = {};
   mensagensErro: any = {};
   mensagensSucesso: any = {};
+  salvando: { [nome: string]: boolean } = {};
 
   constructor(private palpiteService: PalpiteService) {}
 
