@@ -1,8 +1,37 @@
+<!-- Botões de ação -->
+<div class="botoes-inicio" style="text-align: center; margin: 20px 0;">
+  <button *ngIf="authService.isAdmin()" (click)="iniciarRegistroPartida()">
+    Registrar Nova Partida
+  </button>
+
+  <button (click)="iniciarSelecaoPartidaExistente()">
+    Consultar Partidas Futuras
+  </button>
+</div>
+
+<!-- Card para ADMIN criar nova partida -->
 <app-match-info
+  *ngIf="registrandoNovaPartida && authService.isAdmin()"
   (jogoAtualizado)="atualizarJogo($event)"
   (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
 </app-match-info>
 
+<!-- Lista de partidas futuras -->
+<div *ngIf="selecionandoPartida">
+  <h3 style="text-align: center; margin-bottom: 16px;">Partidas Disponíveis para Palpite</h3>
+  <div *ngIf="partidasFuturas.length === 0" style="text-align: center;">
+    Nenhuma partida futura encontrada.
+  </div>
+  <ul *ngIf="partidasFuturas.length > 0" style="list-style: none; padding: 0;">
+    <li *ngFor="let partida of partidasFuturas" style="margin-bottom: 12px; text-align: center;">
+      <strong>{{ partida.dataHora }}</strong> - {{ partida.adversario }} ({{ partida.local }})
+      <br />
+      <button (click)="selecionarPartida(partida)">Selecionar Partida</button>
+    </li>
+  </ul>
+</div>
+
+<!-- Palpites (liberado após seleção ou registro de partida) -->
 <app-palpites
   [adversario]="adversario"
   [dataHora]="dataHora"
@@ -10,14 +39,10 @@
   [palpiteiros]="palpiteiros"
   [partidaId]="partidaId"
   [palpitesPreCarregados]="palpitesRef"
-  (palpitesChange)="receberPalpites($event)"
-></app-palpites>
+  (palpitesChange)="receberPalpites($event)">
+</app-palpites>
 
-
-<div *ngIf="partidaId" class="alert-edicao">
-  <strong>Modo de Edição:</strong> Você está editando uma partida já registrada. Os palpites anteriores serão substituídos.
-</div>
-
+<!-- Resultado do jogo -->
 <app-resultado-final
   [palpites]="palpitesRef"
   [palpiteiros]="palpiteiros"
@@ -28,5 +53,5 @@
   (pontuacoesAtualizadas)="atualizarPontuacao($event)">
 </app-resultado-final>
 
+<!-- Classificação atualizada -->
 <app-classificacao [classificacao]="getClassificacao()"></app-classificacao>
-

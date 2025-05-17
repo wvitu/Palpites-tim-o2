@@ -170,4 +170,32 @@ export class PalpiteService {
       admin
     });
   }
+  async getPartidasNaoVerificadas(): Promise<any[]> {
+    const uidGrupo = this.getUidGrupoOrThrow();
+    const partidasRef = collection(this.firestore, `grupos/${uidGrupo}/partidas`);
+    const q = query(partidasRef, where('verificado', '==', false));
+    const snapshot = await getDocs(q);
+
+    const partidas: any[] = [];
+
+    for (const docSnap of snapshot.docs) {
+      const partida = docSnap.data();
+
+      // Coleta os palpites existentes dessa partida
+      const palpitesRef = collection(this.firestore, `grupos/${uidGrupo}/partidas/${docSnap.id}/palpites`);
+      const palpitesSnap = await getDocs(palpitesRef);
+      const palpites = palpitesSnap.docs.map(p => ({
+        nome: p.id,
+        ...p.data()
+      }));
+
+      partidas.push({
+        id: docSnap.id,
+        ...partida,
+        palpites
+      });
+    }
+
+    return partidas;
+  }
 }

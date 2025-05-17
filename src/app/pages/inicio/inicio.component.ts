@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PalpiteService } from 'src/app/services/palpite.service';
-import { AuthService } from 'src/app/services/auth.service'; 
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-inicio',
@@ -18,7 +18,15 @@ export class InicioComponent implements OnInit {
   palpitesRef: any = {};
   pontuacao: { [nome: string]: { pontos: number; acertos: number } } = {};
 
-  constructor(private router: Router, private palpiteService: PalpiteService, public authService: AuthService) {}
+  partidasFuturas: any[] = [];
+  selecionandoPartida: boolean = false;
+  registrandoNovaPartida: boolean = false;
+
+  constructor(
+    private router: Router,
+    private palpiteService: PalpiteService,
+    public authService: AuthService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     const navigation = this.router.getCurrentNavigation();
@@ -30,18 +38,22 @@ export class InicioComponent implements OnInit {
       this.local = state.partida.local || '';
       this.partidaId = state.partida.id || '';
 
-      // 👇 Repassa os palpites existentes, se houver
       if (state.partida.palpites) {
         this.palpiteiros = Object.keys(state.partida.palpites);
         this.palpitesRef = state.partida.palpites;
       }
     } else {
-      // ⚠️ AQUI: Corrige para pegar só os nomes dos membros
       const membros = await this.palpiteService.getMembrosGrupo();
       this.palpiteiros = membros.map(m => m.nome);
+
+      // ✅ Carrega partidas futuras (não verificadas)
+      this.partidasFuturas = await this.palpiteService.getPartidasNaoVerificadas();
     }
 
-    // ✅ Ranking baseado apenas nas partidas verificadas
+    await this.carregarRanking();
+  }
+
+  async carregarRanking() {
     const ranking = await this.palpiteService.getRankingAPartirDoHistorico();
     this.pontuacao = {};
     for (const item of ranking) {
@@ -86,5 +98,34 @@ export class InicioComponent implements OnInit {
       pontos: dados.pontos,
       acertos: dados.acertos
     }));
+  }
+
+  iniciarRegistroPartida() {
+    this.registrandoNovaPartida = true;
+    this.selecionandoPartida = false;
+    this.limparPartidaAtual();
+  }
+
+  iniciarSelecaoPartidaExistente() {
+    this.selecionandoPartida = true;
+    this.registrandoNovaPartida = false;
+  }
+
+  selecionarPartida(partida: any) {
+    this.adversario = partida.adversario;
+    this.dataHora = partida.dataHora;
+    this.local = partida.local;
+    this.partidaId = partida.id;
+    this.palpitesRef = partida.palpites || {};
+    this.palpiteiros = Object.keys(this.palpitesRef);
+    this.selecionandoPartida = false;
+  }
+
+  limparPartidaAtual() {
+    this.adversario = '';
+    this.dataHora = '';
+    this.local = '';
+    this.partidaId = '';
+    this.palpitesRef = {};
   }
 }
