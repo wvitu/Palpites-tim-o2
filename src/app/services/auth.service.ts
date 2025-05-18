@@ -11,7 +11,9 @@ export class AuthService {
   grupoId: string = '';
   isAdmin: boolean = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.carregarSessao();
+  }
 
   async loginComBackend(nome: string, grupoId: string, admin: boolean): Promise<boolean> {
     try {
@@ -48,5 +50,22 @@ export class AuthService {
   logout() {
     getAuth().signOut();
     localStorage.clear();
+  }
+
+  // 👇 Métodos auxiliares para compatibilidade
+  estaLogado(): boolean {
+    return !!this.nome && !!this.grupoId;
+  }
+
+  getUsuario(): string {
+    return this.nome;
+  }
+
+  getGrupoId(): string {
+    return this.grupoId;
+  }
+
+  isAdminUser(): boolean {
+    return this.isAdmin;
   }
 }

@@ -20,7 +20,7 @@ export class AdminDashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (!this.auth.isAdmin()) {
+    if (!this.auth.isAdminUser()) {
       this.erro = 'Acesso restrito. Somente administradores.';
       return;
     }

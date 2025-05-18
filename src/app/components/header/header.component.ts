@@ -10,6 +10,6 @@ export class HeaderComponent {
   constructor(public auth: AuthService) {}
 
   get isAdmin(): boolean {
-    return this.auth.isAdmin();
+    return this.auth.isAdminUser();
   }
 }
