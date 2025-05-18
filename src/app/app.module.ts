@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -43,6 +44,7 @@ import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
     RouterModule, // <-- IMPORTAR AQUI!
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
 provideFirestore(() => getFirestore()),
