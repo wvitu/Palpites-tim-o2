@@ -1,61 +1,52 @@
+// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
+import { getAuth, signInWithCustomToken } from 'firebase/auth';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  usuario: string = '';
-  admin: boolean = false;
+  nome: string = '';
   grupoId: string = '';
+  isAdmin: boolean = false;
 
-  constructor() {
-    this.carregarSessao(); // Carrega ao inicializar
-  }
+  constructor(private http: HttpClient) {}
 
-  setUsuario(usuario: string, admin: boolean, grupoId: string) {
-    this.usuario = usuario;
-    this.admin = admin;
-    this.grupoId = grupoId;
+  async loginComBackend(nome: string, grupoId: string, admin: boolean): Promise<boolean> {
+    try {
+      const response: any = await this.http
+        .post('http://localhost:3000/gerar-token', { nome, admin })
+        .toPromise();
 
-    // Salvar no localStorage
-    localStorage.setItem('sessao', JSON.stringify({ usuario, admin, grupoId }));
-  }
+      const token = response.token;
+      const auth = getAuth();
+      await signInWithCustomToken(auth, token);
 
-  carregarSessao() {
-    const dados = localStorage.getItem('sessao');
-    if (dados) {
-      try {
-        const parsed = JSON.parse(dados);
-        this.usuario = parsed.usuario;
-        this.admin = parsed.admin;
-        this.grupoId = parsed.grupoId;
-      } catch {
-        console.warn('Erro ao carregar sessão do localStorage.');
-        this.logout(); // limpar se inválido
-      }
+      this.nome = nome;
+      this.grupoId = grupoId;
+      this.isAdmin = admin;
+
+      localStorage.setItem('usuario', JSON.stringify({ nome, grupoId, isAdmin: admin }));
+      return true;
+    } catch (err) {
+      console.error('Erro ao logar com token:', err);
+      return false;
     }
   }
 
-  isAdmin(): boolean {
-    return this.admin;
-  }
-
-  getGrupoId(): string {
-    return this.grupoId;
-  }
-
-  getUsuario(): string {
-    return this.usuario;
+  carregarSessao() {
+    const dados = localStorage.getItem('usuario');
+    if (dados) {
+      const user = JSON.parse(dados);
+      this.nome = user.nome;
+      this.grupoId = user.grupoId;
+      this.isAdmin = user.isAdmin;
+    }
   }
 
   logout() {
-    this.usuario = '';
-    this.admin = false;
-    this.grupoId = '';
-    localStorage.removeItem('sessao');
-  }
-
-  estaLogado(): boolean {
-    return !!this.usuario && !!this.grupoId;
+    getAuth().signOut();
+    localStorage.clear();
   }
 }
