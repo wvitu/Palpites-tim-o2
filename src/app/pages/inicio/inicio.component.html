@@ -1,6 +1,6 @@
 <!-- Botões de ação -->
 <div class="botoes-inicio" style="text-align: center; margin: 20px 0;">
-  <button *ngIf="authService.isAdmin()" (click)="iniciarRegistroPartida()">
+  <button *ngIf="authService.isAdminUser()" (click)="iniciarRegistroPartida()">
     Registrar Nova Partida
   </button>
 
@@ -11,7 +11,7 @@
 
 <!-- Card para ADMIN criar nova partida -->
 <app-match-info
-  *ngIf="registrandoNovaPartida && authService.isAdmin()"
+*ngIf="registrandoNovaPartida && authService.isAdminUser()"
   (jogoAtualizado)="atualizarJogo($event)"
   (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
 </app-match-info>
@@ -49,7 +49,7 @@
   [adversario]="adversario"
   [dataHora]="dataHora"
   [local]="local"
-  [isAdmin]="authService.isAdmin()"
+  [isAdmin]="authService.isAdminUser()"
   (pontuacoesAtualizadas)="atualizarPontuacao($event)">
 </app-resultado-final>
 
