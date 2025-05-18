@@ -40,3 +40,12 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# .gitignore
+firebaseServiceAccount.json
+.env
+node_modules/
+dist/
+palpites-auth-backend/.env
+/palpites-auth-backend/.env
+echo palpites-auth-backend/firebaseServiceAccount.json >> .gitignore

@@ -1,33 +1,32 @@
 <div class="login-container">
   <div class="fundo-escuro"></div>
   <div class="login-box">
-
     <div class="titulo-wrapper">
-      <img src="assets/corinthians-logo.png" alt="logo" class="logo-bg" />
+      <img src="assets/corinthians-logo.png" class="logo-bg" />
       <h2 class="titulo-login">
-        {{ modo === 'login' ? 'Entrar no Clube de Palpites' : 'Criar Novo Clube' }}
+        {{ modo === 'login' ? 'Entrar no Clube de Palpites' : 'Criar novo Clube' }}
       </h2>
     </div>
 
     <form (ngSubmit)="autenticar()">
-      <label>ID do Clube</label>
-      <input type="text" [(ngModel)]="grupoId" name="grupoId" required />
+      <label for="grupo">ID do Clube</label>
+      <input type="text" id="grupo" [(ngModel)]="grupoId" name="grupoId" required />
 
-      <label>Seu Nome</label>
-      <input type="text" [(ngModel)]="nome" name="nome" required />
+      <label for="nome">Seu Nome</label>
+      <input type="text" id="nome" [(ngModel)]="nome" name="nome" required />
 
-      <label>Senha</label>
-      <input type="password" [(ngModel)]="senha" name="senha" required />
+      <label for="senha">Senha</label>
+      <input type="password" id="senha" [(ngModel)]="senha" name="senha" required />
 
       <button type="submit" [disabled]="carregando">
-        {{ carregando ? 'Processando...' : (modo === 'login' ? 'Entrar' : 'Criar Clube') }}
+        {{ carregando ? 'Carregando...' : (modo === 'login' ? 'Entrar' : 'Criar Clube') }}
       </button>
     </form>
 
     <p *ngIf="erro" class="erro">{{ erro }}</p>
 
     <button (click)="alternarModo()">
-      {{ modo === 'login' ? 'Quero criar um novo clube' : 'Já tenho um clube' }}
+      {{ modo === 'login' ? 'Não tem um clube? Criar novo' : 'Já tenho um clube' }}
     </button>
   </div>
 </div>
