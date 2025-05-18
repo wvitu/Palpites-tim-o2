@@ -1,4 +1,3 @@
-// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { getAuth, signInWithCustomToken } from 'firebase/auth';
 import { HttpClient } from '@angular/common/http';
@@ -25,16 +24,24 @@ export class AuthService {
       const auth = getAuth();
       await signInWithCustomToken(auth, token);
 
-      this.nome = nome;
-      this.grupoId = grupoId;
-      this.isAdmin = admin;
-
-      localStorage.setItem('usuario', JSON.stringify({ nome, grupoId, isAdmin: admin }));
+      this.setUsuario(nome, admin, grupoId);
       return true;
     } catch (err) {
       console.error('Erro ao logar com token:', err);
       return false;
     }
+  }
+
+  setUsuario(nome: string, admin: boolean, grupoId: string) {
+    this.nome = nome;
+    this.isAdmin = admin;
+    this.grupoId = grupoId;
+
+    localStorage.setItem('usuario', JSON.stringify({
+      nome,
+      isAdmin: admin,
+      grupoId
+    }));
   }
 
   carregarSessao() {
@@ -52,7 +59,6 @@ export class AuthService {
     localStorage.clear();
   }
 
-  // 👇 Métodos auxiliares para compatibilidade
   estaLogado(): boolean {
     return !!this.nome && !!this.grupoId;
   }
