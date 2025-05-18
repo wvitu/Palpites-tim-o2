@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
+import { signInWithCustomToken, getAuth } from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -15,11 +17,12 @@ export class LoginComponent {
   erro: string = '';
   carregando: boolean = false;
 
-  modo: 'login' | 'cadastro' = 'login'; // Alterna entre login e criação
+  modo: 'login' | 'cadastro' = 'login';
 
   constructor(
     private firestore: Firestore,
     private auth: AuthService,
+    private http: HttpClient,
     private router: Router
   ) {}
 
@@ -38,7 +41,7 @@ export class LoginComponent {
       const membroRef = doc(this.firestore, `grupos/${this.grupoId}/membros/${this.nome}`);
 
       if (this.modo === 'cadastro') {
-        // Criação do novo clube e primeiro admin
+        // Verifica se o clube já existe
         const clubeSnap = await getDoc(clubeRef);
         if (clubeSnap.exists()) {
           this.erro = 'Este ID de clube já existe. Escolha outro.';
@@ -46,18 +49,13 @@ export class LoginComponent {
           return;
         }
 
+        // Cria novo clube e primeiro membro como admin
         await setDoc(clubeRef, { criadoEm: new Date() });
-        await setDoc(membroRef, {
-          senha: this.senha,
-          admin: true
-        });
+        await setDoc(membroRef, { senha: this.senha, admin: true });
 
-        this.auth.setUsuario(this.nome, true, this.grupoId);
-        this.router.navigate(['/']);
+        await this.loginComToken(true); // Admin
       } else {
-        // Login em clube existente
         const membroSnap = await getDoc(membroRef);
-
         if (!membroSnap.exists()) {
           this.erro = 'Usuário não encontrado.';
           this.carregando = false;
@@ -71,8 +69,7 @@ export class LoginComponent {
           return;
         }
 
-        this.auth.setUsuario(this.nome, data['admin'] === true, this.grupoId);
-        this.router.navigate(['/']);
+        await this.loginComToken(data['admin'] === true);
       }
     } catch (e) {
       console.error('Erro na autenticação:', e);
@@ -80,6 +77,33 @@ export class LoginComponent {
     }
 
     this.carregando = false;
+  }
+
+  async loginComToken(isAdmin: boolean) {
+    try {
+      // 🔐 Solicita token personalizado do backend
+      const resposta: any = await this.http
+        .post('http://localhost:3000/gerar-token', {
+          nome: this.nome,
+          admin: isAdmin
+        })
+        .toPromise();
+
+      const auth = getAuth();
+      const credenciais = await signInWithCustomToken(auth, resposta.token);
+
+      // 🧠 Recupera claims do token
+      const tokenInfo = await credenciais.user.getIdTokenResult();
+      const adminViaClaim = tokenInfo.claims['admin'] === true;
+
+
+      // ✅ Seta usuário no serviço de autenticação
+      this.auth.setUsuario(this.nome, adminViaClaim, this.grupoId);
+      this.router.navigate(['/']);
+    } catch (err) {
+      console.error('Erro ao fazer login com token:', err);
+      this.erro = 'Falha ao autenticar com o servidor.';
+    }
   }
 
   alternarModo() {
