@@ -21,11 +21,7 @@ app.post('/gerar-token', (req: Request, res: Response) => {
   (async () => {
     try {
       const { nome, admin: isAdmin } = req.body;
-
-      const token = await adminAuth.createCustomToken(nome, {
-        admin: isAdmin,
-        grupoId: process.env.PROJECT_ID || '',
-      });
+      const token = await admin.auth().createCustomToken(uid, { admin });
 
       res.json({ token });
     } catch (error) {

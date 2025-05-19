@@ -1,53 +1,37 @@
+// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
-import { getAuth, signInWithCustomToken } from 'firebase/auth';
-import { HttpClient } from '@angular/common/http';
+import { getAuth, signOut } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  uid: string = '';
   nome: string = '';
   grupoId: string = '';
   isAdmin: boolean = false;
 
-  constructor(private http: HttpClient) {
+  constructor() {
     this.carregarSessao();
   }
 
-  async loginComBackend(nome: string, grupoId: string, admin: boolean): Promise<boolean> {
-    try {
-      const response: any = await this.http
-        .post('http://localhost:3000/gerar-token', { nome, admin })
-        .toPromise();
-
-      const token = response.token;
-      const auth = getAuth();
-      await signInWithCustomToken(auth, token);
-
-      this.setUsuario(nome, admin, grupoId);
-      return true;
-    } catch (err) {
-      console.error('Erro ao logar com token:', err);
-      return false;
-    }
-  }
-
-  setUsuario(nome: string, admin: boolean, grupoId: string) {
+  setUsuario(uid: string, nome: string, grupoId: string, admin: boolean) {
+    this.uid = uid;
     this.nome = nome;
-    this.isAdmin = admin;
     this.grupoId = grupoId;
+    this.isAdmin = admin;
 
-    localStorage.setItem('usuario', JSON.stringify({
-      nome,
-      isAdmin: admin,
-      grupoId
-    }));
+    localStorage.setItem(
+      'usuario',
+      JSON.stringify({ uid, nome, grupoId, isAdmin: admin })
+    );
   }
 
   carregarSessao() {
     const dados = localStorage.getItem('usuario');
     if (dados) {
       const user = JSON.parse(dados);
+      this.uid = user.uid;
       this.nome = user.nome;
       this.grupoId = user.grupoId;
       this.isAdmin = user.isAdmin;
@@ -55,12 +39,12 @@ export class AuthService {
   }
 
   logout() {
-    getAuth().signOut();
+    signOut(getAuth());
     localStorage.clear();
   }
 
   estaLogado(): boolean {
-    return !!this.nome && !!this.grupoId;
+    return !!this.uid && !!this.grupoId;
   }
 
   getUsuario(): string {
@@ -74,6 +58,8 @@ export class AuthService {
   isAdminUser(): boolean {
     return this.isAdmin;
   }
-}
 
-//teste 
+  getUid(): string {
+    return this.uid;
+  }
+}

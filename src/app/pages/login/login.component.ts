@@ -1,85 +1,74 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
-import { HttpClient } from '@angular/common/http';
-import { getAuth, signInWithCustomToken } from 'firebase/auth';
+import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  grupoId: string = '';
-  nome: string = '';
+  email: string = '';
   senha: string = '';
+  nome: string = '';
+  grupoId: string = '';
+  modo: 'login' | 'cadastro' = 'login';
   erro: string = '';
   carregando: boolean = false;
 
-  modo: 'login' | 'cadastro' = 'login';
-
   constructor(
+    private authService: AuthService,
     private firestore: Firestore,
-    private auth: AuthService,
-    private router: Router,
-    private http: HttpClient
+    private router: Router
   ) {}
 
   async autenticar() {
     this.erro = '';
     this.carregando = true;
 
-    if (!this.grupoId || !this.nome || !this.senha) {
-      this.erro = 'Preencha todos os campos.';
-      this.carregando = false;
-      return;
-    }
-
     try {
-      const clubeRef = doc(this.firestore, `grupos/${this.grupoId}`);
-      const membroRef = doc(this.firestore, `grupos/${this.grupoId}/membros/${this.nome}`);
+      const auth = getAuth();
 
       if (this.modo === 'cadastro') {
-        const clubeSnap = await getDoc(clubeRef);
-        if (clubeSnap.exists()) {
-          this.erro = 'Este ID de clube já existe.';
-          this.carregando = false;
-          return;
-        }
+        const cred = await createUserWithEmailAndPassword(auth, this.email, this.senha);
 
-        await setDoc(clubeRef, { criadoEm: new Date() });
-        await setDoc(membroRef, { senha: this.senha, admin: true });
+        // Salva displayName do usuário
+        await updateProfile(cred.user, { displayName: this.nome });
 
-        const token = await this.gerarToken(this.nome, true);
-        await signInWithCustomToken(getAuth(), token);
-        await this.exibirClaims(); // 👈 debug
-        this.auth.setUsuario(this.nome, true, this.grupoId);
-        this.router.navigate(['/']);
+        // Salva no Firestore: grupo + admin
+        await setDoc(doc(this.firestore, `usuarios/${cred.user.uid}`), {
+          grupoId: this.grupoId,
+          admin: true,
+          nome: this.nome,
+        });
+
+        this.authService.setUsuario(cred.user.uid, this.nome, this.grupoId, true);
       } else {
-        const membroSnap = await getDoc(membroRef);
-        if (!membroSnap.exists()) {
-          this.erro = 'Usuário não encontrado.';
+        const cred = await signInWithEmailAndPassword(auth, this.email, this.senha);
+        const uid = cred.user.uid;
+
+        const userDoc = await getDoc(doc(this.firestore, `usuarios/${uid}`));
+        if (!userDoc.exists()) {
+          this.erro = 'Usuário sem dados de grupo.';
           this.carregando = false;
           return;
         }
 
-        const data = membroSnap.data();
-        if (data['senha'] !== this.senha) {
-          this.erro = 'Senha incorreta.';
-          this.carregando = false;
-          return;
-        }
-
-        const token = await this.gerarToken(this.nome, data['admin']);
-        await signInWithCustomToken(getAuth(), token);
-        await this.exibirClaims(); // 👈 debug
-        this.auth.setUsuario(this.nome, data['admin'], this.grupoId);
-        this.router.navigate(['/']);
+        const data = userDoc.data();
+        this.authService.setUsuario(uid, data['nome'], data['grupoId'], data['admin']);
       }
-    } catch (e) {
+
+      this.router.navigate(['/']);
+    } catch (e: any) {
       console.error('Erro na autenticação:', e);
-      this.erro = 'Erro ao conectar. Tente novamente.';
+      this.erro = e?.message || 'Erro ao autenticar.';
     }
 
     this.carregando = false;
@@ -88,22 +77,5 @@ export class LoginComponent {
   alternarModo() {
     this.modo = this.modo === 'login' ? 'cadastro' : 'login';
     this.erro = '';
-  }
-
-  private async gerarToken(nome: string, admin: boolean): Promise<string> {
-    const response = await this.http.post<{ token: string }>(
-      'http://localhost:3000/gerar-token',
-      { nome, admin }
-    ).toPromise();
-
-    return response?.token || '';
-  }
-
-  private async exibirClaims() {
-    const user = getAuth().currentUser;
-    if (user) {
-      const tokenInfo = await user.getIdTokenResult();
-      console.log('🔐 Claims do usuário:', tokenInfo.claims);
-    }
   }
 }

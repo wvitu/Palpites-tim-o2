@@ -7,9 +7,9 @@
   </div>
 
   <nav class="nav-buttons">
-    <button routerLink="/">Início</button>
+    <a routerLink="/">Início</a>
+  <button *ngIf="isAdmin" routerLink="/admin">Meu Clube</button>
     <button routerLink="/classificacao">Classificação</button>
     <button routerLink="/historico">Histórico</button>
-    <button *ngIf="isAdmin" routerLink="/admin">Meu Clube</button>
   </nav>
 </header>
