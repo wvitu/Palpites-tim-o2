@@ -1,32 +1,20 @@
 <div class="login-container">
-  <div class="fundo-escuro"></div>
-  <div class="login-box">
-    <div class="titulo-wrapper">
-      <img src="assets/corinthians-logo.png" class="logo-bg" />
-      <h2 class="titulo-login">
-        {{ modo === 'login' ? 'Entrar no Clube de Palpites' : 'Criar novo Clube' }}
-      </h2>
-    </div>
+  <h2>{{ modo === 'login' ? 'Entrar' : 'Criar Clube' }}</h2>
 
-    <form (ngSubmit)="autenticar()">
-      <label for="grupo">ID do Clube</label>
-      <input type="text" id="grupo" [(ngModel)]="grupoId" name="grupoId" required />
+  <form (submit)="autenticar()" class="login-form">
+    <input type="text" placeholder="Nome" [(ngModel)]="nome" name="nome" required />
+    <input type="email" placeholder="E-mail" [(ngModel)]="email" name="email" required />
+    <input type="password" placeholder="Senha" [(ngModel)]="senha" name="senha" required />
+    <input type="text" placeholder="ID do Clube" [(ngModel)]="grupoId" name="grupoId" required />
 
-      <label for="nome">Seu Nome</label>
-      <input type="text" id="nome" [(ngModel)]="nome" name="nome" required />
-
-      <label for="senha">Senha</label>
-      <input type="password" id="senha" [(ngModel)]="senha" name="senha" required />
-
-      <button type="submit" [disabled]="carregando">
-        {{ carregando ? 'Carregando...' : (modo === 'login' ? 'Entrar' : 'Criar Clube') }}
-      </button>
-    </form>
-
-    <p *ngIf="erro" class="erro">{{ erro }}</p>
-
-    <button (click)="alternarModo()">
-      {{ modo === 'login' ? 'Não tem um clube? Criar novo' : 'Já tenho um clube' }}
+    <button type="submit" [disabled]="carregando">
+      {{ modo === 'login' ? 'Entrar' : 'Cadastrar Clube' }}
     </button>
-  </div>
+    <div *ngIf="erro" class="erro">{{ erro }}</div>
+  </form>
+
+  <p class="alternar">
+    {{ modo === 'login' ? 'Ainda não tem clube?' : 'Já possui conta?' }}
+    <a href="#" (click)="alternarModo()">Clique aqui</a>
+  </p>
 </div>

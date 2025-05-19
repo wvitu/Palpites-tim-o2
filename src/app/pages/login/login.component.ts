@@ -1,74 +1,78 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   email: string = '';
   senha: string = '';
   nome: string = '';
   grupoId: string = '';
-  modo: 'login' | 'cadastro' = 'login';
   erro: string = '';
   carregando: boolean = false;
 
+  modo: 'login' | 'cadastro' = 'login';
+
   constructor(
-    private authService: AuthService,
+    private router: Router,
     private firestore: Firestore,
-    private router: Router
+    private auth: AuthService
   ) {}
 
   async autenticar() {
     this.erro = '';
     this.carregando = true;
 
+    const auth = getAuth();
+
+    if (!this.email || !this.senha || !this.grupoId || !this.nome) {
+      this.erro = 'Preencha todos os campos.';
+      this.carregando = false;
+      return;
+    }
+
     try {
-      const auth = getAuth();
+      const uidGrupo = `grupo-${this.grupoId}`;
 
       if (this.modo === 'cadastro') {
-        const cred = await createUserWithEmailAndPassword(auth, this.email, this.senha);
+        const credenciais = await createUserWithEmailAndPassword(auth, this.email, this.senha);
+        const uid = credenciais.user.uid;
 
-        // Salva displayName do usuário
-        await updateProfile(cred.user, { displayName: this.nome });
-
-        // Salva no Firestore: grupo + admin
-        await setDoc(doc(this.firestore, `usuarios/${cred.user.uid}`), {
-          grupoId: this.grupoId,
-          admin: true,
+        // Cria o grupo e o membro admin
+        await setDoc(doc(this.firestore, `grupos/${uidGrupo}`), { criadoEm: new Date() });
+        await setDoc(doc(this.firestore, `grupos/${uidGrupo}/membros/${uid}`), {
           nome: this.nome,
+          admin: true
         });
 
-        this.authService.setUsuario(cred.user.uid, this.nome, this.grupoId, true);
+        this.auth.setUsuario(uid, this.nome, uidGrupo, true);
+        this.router.navigate(['/']);
       } else {
-        const cred = await signInWithEmailAndPassword(auth, this.email, this.senha);
-        const uid = cred.user.uid;
+        const credenciais = await signInWithEmailAndPassword(auth, this.email, this.senha);
+        const uid = credenciais.user.uid;
 
-        const userDoc = await getDoc(doc(this.firestore, `usuarios/${uid}`));
-        if (!userDoc.exists()) {
-          this.erro = 'Usuário sem dados de grupo.';
+        const membroRef = doc(this.firestore, `grupos/${uidGrupo}/membros/${uid}`);
+        const membroSnap = await getDoc(membroRef);
+
+        if (!membroSnap.exists()) {
+          this.erro = 'Usuário não encontrado no grupo.';
           this.carregando = false;
           return;
         }
 
-        const data = userDoc.data();
-        this.authService.setUsuario(uid, data['nome'], data['grupoId'], data['admin']);
+        const membro = membroSnap.data();
+        this.auth.setUsuario(uid, membro['nome'], uidGrupo, membro['admin'] === true);
+        this.router.navigate(['/']);
       }
-
-      this.router.navigate(['/']);
     } catch (e: any) {
-      console.error('Erro na autenticação:', e);
-      this.erro = e?.message || 'Erro ao autenticar.';
+      console.error('Erro:', e);
+      this.erro = e.message || 'Erro ao autenticar. Tente novamente.';
     }
 
     this.carregando = false;
