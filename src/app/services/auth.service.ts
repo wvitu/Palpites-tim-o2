@@ -1,6 +1,8 @@
 // src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { getAuth, signOut } from 'firebase/auth';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+
 
 @Injectable({
   providedIn: 'root',
@@ -62,4 +64,14 @@ export class AuthService {
   getUid(): string {
     return this.uid;
   }
+  async encontrarGrupoPorUid(uid: string, firestore: Firestore): Promise<string | null> {
+  const gruposRef = doc(firestore, `grupos/lista`);
+  const snapshot = await getDoc(gruposRef); // se tiver algum índice, substitua por consulta ideal
+  // Aqui você deverá implementar uma maneira de localizar em qual grupo está o uid
+
+  // Exemplo básico:
+  // Iterar manualmente todos os grupos seria inviável em produção, aqui é apenas ilustração:
+  return `grupo-algumaCoisa`; // substitua por lógica real
+}
+
 }

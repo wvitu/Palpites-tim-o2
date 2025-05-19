@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -12,12 +12,8 @@ import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } f
 export class LoginComponent {
   email: string = '';
   senha: string = '';
-  nome: string = '';
-  grupoId: string = '';
   erro: string = '';
   carregando: boolean = false;
-
-  modo: 'login' | 'cadastro' = 'login';
 
   constructor(
     private router: Router,
@@ -31,55 +27,34 @@ export class LoginComponent {
 
     const auth = getAuth();
 
-    if (!this.email || !this.senha || !this.grupoId || !this.nome) {
-      this.erro = 'Preencha todos os campos.';
+    if (!this.email || !this.senha) {
+      this.erro = 'Preencha e-mail e senha.';
       this.carregando = false;
       return;
     }
 
     try {
-      const uidGrupo = `grupo-${this.grupoId}`;
+      const credenciais = await signInWithEmailAndPassword(auth, this.email, this.senha);
+      const uid = credenciais.user.uid;
 
-      if (this.modo === 'cadastro') {
-        const credenciais = await createUserWithEmailAndPassword(auth, this.email, this.senha);
-        const uid = credenciais.user.uid;
+      // Tenta localizar o membro em algum grupo
+      const grupoId = await this.auth.encontrarGrupoPorUid(uid, this.firestore);
+      if (!grupoId) throw new Error('Usuário não pertence a nenhum clube.');
 
-        // Cria o grupo e o membro admin
-        await setDoc(doc(this.firestore, `grupos/${uidGrupo}`), { criadoEm: new Date() });
-        await setDoc(doc(this.firestore, `grupos/${uidGrupo}/membros/${uid}`), {
-          nome: this.nome,
-          admin: true
-        });
+      const membroRef = doc(this.firestore, `grupos/${grupoId}/membros/${uid}`);
+      const membroSnap = await getDoc(membroRef);
 
-        this.auth.setUsuario(uid, this.nome, uidGrupo, true);
-        this.router.navigate(['/']);
-      } else {
-        const credenciais = await signInWithEmailAndPassword(auth, this.email, this.senha);
-        const uid = credenciais.user.uid;
+      if (!membroSnap.exists()) throw new Error('Usuário não encontrado no grupo.');
 
-        const membroRef = doc(this.firestore, `grupos/${uidGrupo}/membros/${uid}`);
-        const membroSnap = await getDoc(membroRef);
+      const membro = membroSnap.data();
+      this.auth.setUsuario(uid, membro['nome'], grupoId, membro['admin'] === true);
 
-        if (!membroSnap.exists()) {
-          this.erro = 'Usuário não encontrado no grupo.';
-          this.carregando = false;
-          return;
-        }
-
-        const membro = membroSnap.data();
-        this.auth.setUsuario(uid, membro['nome'], uidGrupo, membro['admin'] === true);
-        this.router.navigate(['/']);
-      }
+      this.router.navigate(['/']);
     } catch (e: any) {
-      console.error('Erro:', e);
+      console.error('Erro na autenticação:', e);
       this.erro = e.message || 'Erro ao autenticar. Tente novamente.';
     }
 
     this.carregando = false;
-  }
-
-  alternarModo() {
-    this.modo = this.modo === 'login' ? 'cadastro' : 'login';
-    this.erro = '';
   }
 }

@@ -1,25 +1,33 @@
 .login-container {
-  max-width: 400px;
-  margin: 60px auto;
-  padding: 24px;
+  max-width: 420px;
+  margin: 80px auto;
+  padding: 30px;
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
 }
 
 .login-container h2 {
-  text-align: center;
-  margin-bottom: 24px;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.slogan {
+  font-weight: bold;
+  color: #b60000;
+  margin-bottom: 30px;
+  font-size: 1.2rem;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .login-form input {
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
@@ -27,12 +35,13 @@
 
 button {
   padding: 12px;
-  background: #222;
+  background: #111;
   color: white;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
   font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 button:disabled {
@@ -42,11 +51,10 @@ button:disabled {
 
 .erro {
   color: red;
-  text-align: center;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .alternar {
-  text-align: center;
-  margin-top: 20px;
+  margin-top: 24px;
+  font-size: 0.95rem;
 }

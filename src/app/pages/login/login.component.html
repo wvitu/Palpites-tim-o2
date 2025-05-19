@@ -1,20 +1,17 @@
 <div class="login-container">
-  <h2>{{ modo === 'login' ? 'Entrar' : 'Criar Clube' }}</h2>
+  <h2>Bem vindo ao APP de Palpites do <strong>Bando de Loucos</strong>!</h2>
+  <p class="slogan">VAI CORINTHIANS!</p>
 
   <form (submit)="autenticar()" class="login-form">
-    <input type="text" placeholder="Nome" [(ngModel)]="nome" name="nome" required />
     <input type="email" placeholder="E-mail" [(ngModel)]="email" name="email" required />
     <input type="password" placeholder="Senha" [(ngModel)]="senha" name="senha" required />
-    <input type="text" placeholder="ID do Clube" [(ngModel)]="grupoId" name="grupoId" required />
 
-    <button type="submit" [disabled]="carregando">
-      {{ modo === 'login' ? 'Entrar' : 'Cadastrar Clube' }}
-    </button>
+    <button type="submit" [disabled]="carregando">Entrar</button>
+
     <div *ngIf="erro" class="erro">{{ erro }}</div>
   </form>
 
   <p class="alternar">
-    {{ modo === 'login' ? 'Ainda não tem clube?' : 'Já possui conta?' }}
-    <a href="#" (click)="alternarModo()">Clique aqui</a>
+    Novo por aqui? <a routerLink="/cadastro">Clique aqui para se cadastrar</a>
   </p>
 </div>
