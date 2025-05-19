@@ -8,12 +8,17 @@
   --fonte-principal: 'DIN Condensed', 'Arial Narrow', sans-serif;
 }
 
+@font-face {
+  font-family: 'DIN Condensed';
+  src: url('assets/fonts/DINCondensed-Bold.ttf') format('truetype');
+}
+
 body {
-  background-color: var(--cor-principal);
-  font-family: var(--fonte-principal);
-  color: var(--cor-texto);
   margin: 0;
   padding: 0;
+  background: url('assets/fundo-site-login.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'DIN Condensed', 'Arial Narrow', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
