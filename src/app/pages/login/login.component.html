@@ -1,19 +1,23 @@
-<div class="login-bg">
-  <div class="overlay"></div>
-  <div class="login-container">
-    <h2></h2>
-    <div class="slogan">Bem-vindo ao APP de Palpites do Bando de Loucos! VAI CORINTHIANS!</div>
+<div class="login-container">
+  <h2>Login</h2>
+
+  <div class="slogan">
+    Bem-vindo ao APP de Palpites do Bando de Loucos!<br />
+    <strong>VAI CORINTHIANS!</strong>
+  </div>
 
   <form (submit)="autenticar()" class="login-form">
-    <input type="email" placeholder="E-mail" [(ngModel)]="email" name="email" required />
+    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
     <input type="password" placeholder="Senha" [(ngModel)]="senha" name="senha" required />
 
-    <button type="submit" [disabled]="carregando">Entrar</button>
-
-    <div *ngIf="erro" class="erro">{{ erro }}</div>
+    <button type="submit" [disabled]="carregando">
+      {{ carregando ? 'Entrando...' : 'Entrar' }}
+    </button>
   </form>
 
-  <p class="alternar">
-    Novo por aqui? <a routerLink="/cadastro">Clique aqui para se cadastrar</a>
-  </p>
+  <div *ngIf="erro" class="erro">{{ erro }}</div>
+
+  <div class="alternar">
+    Não tem uma conta? <a routerLink="/cadastro">Criar agora</a>
+  </div>
 </div>

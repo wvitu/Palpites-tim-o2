@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
@@ -16,43 +16,50 @@ export class LoginComponent {
   carregando: boolean = false;
 
   constructor(
-    private router: Router,
+    private afAuth: Auth,
     private firestore: Firestore,
-    private auth: AuthService
+    private auth: AuthService,
+    private router: Router
   ) {}
 
   async autenticar() {
     this.erro = '';
     this.carregando = true;
 
-    const auth = getAuth();
-
     if (!this.email || !this.senha) {
-      this.erro = 'Preencha e-mail e senha.';
+      this.erro = 'Preencha todos os campos.';
       this.carregando = false;
       return;
     }
 
     try {
-      const credenciais = await signInWithEmailAndPassword(auth, this.email, this.senha);
+      const credenciais = await signInWithEmailAndPassword(this.afAuth, this.email, this.senha);
       const uid = credenciais.user.uid;
 
-      // Tenta localizar o membro em algum grupo
       const grupoId = await this.auth.encontrarGrupoPorUid(uid, this.firestore);
-      if (!grupoId) throw new Error('Usuário não pertence a nenhum clube.');
+
+      if (!grupoId) {
+        this.erro = 'Grupo não encontrado para este usuário.';
+        this.carregando = false;
+        return;
+      }
 
       const membroRef = doc(this.firestore, `grupos/${grupoId}/membros/${uid}`);
       const membroSnap = await getDoc(membroRef);
 
-      if (!membroSnap.exists()) throw new Error('Usuário não encontrado no grupo.');
+      if (!membroSnap.exists()) {
+        this.erro = 'Membro não encontrado.';
+        this.carregando = false;
+        return;
+      }
 
       const membro = membroSnap.data();
-      this.auth.setUsuario(uid, membro['nome'], grupoId, membro['admin'] === true);
 
+      this.auth.setUsuario(uid, membro['nome'], grupoId, membro['admin'] === true);
       this.router.navigate(['/']);
-    } catch (e: any) {
+    } catch (e) {
       console.error('Erro na autenticação:', e);
-      this.erro = e.message || 'Erro ao autenticar. Tente novamente.';
+      this.erro = 'Erro ao conectar. Tente novamente.';
     }
 
     this.carregando = false;
