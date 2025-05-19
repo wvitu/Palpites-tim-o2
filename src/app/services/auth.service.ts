@@ -1,4 +1,3 @@
-// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { getAuth, signInWithCustomToken } from 'firebase/auth';
 import { HttpClient } from '@angular/common/http';
@@ -76,3 +75,5 @@ export class AuthService {
     return this.isAdmin;
   }
 }
+
+//teste 

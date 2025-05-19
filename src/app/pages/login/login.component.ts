@@ -53,6 +53,7 @@ export class LoginComponent {
 
         const token = await this.gerarToken(this.nome, true);
         await signInWithCustomToken(getAuth(), token);
+        await this.exibirClaims(); // 👈 debug
         this.auth.setUsuario(this.nome, true, this.grupoId);
         this.router.navigate(['/']);
       } else {
@@ -72,6 +73,7 @@ export class LoginComponent {
 
         const token = await this.gerarToken(this.nome, data['admin']);
         await signInWithCustomToken(getAuth(), token);
+        await this.exibirClaims(); // 👈 debug
         this.auth.setUsuario(this.nome, data['admin'], this.grupoId);
         this.router.navigate(['/']);
       }
@@ -95,5 +97,13 @@ export class LoginComponent {
     ).toPromise();
 
     return response?.token || '';
+  }
+
+  private async exibirClaims() {
+    const user = getAuth().currentUser;
+    if (user) {
+      const tokenInfo = await user.getIdTokenResult();
+      console.log('🔐 Claims do usuário:', tokenInfo.claims);
+    }
   }
 }

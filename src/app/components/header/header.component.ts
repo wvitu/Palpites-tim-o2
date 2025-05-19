@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class HeaderComponent {
   constructor(public auth: AuthService) {}
 
-  get isAdmin(): boolean {
+  get isAdminUser(): boolean {
     return this.auth.isAdminUser();
   }
 }
