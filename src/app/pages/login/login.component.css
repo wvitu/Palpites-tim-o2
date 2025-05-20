@@ -1,16 +1,14 @@
-@font-face {
-  font-family: 'DIN Condensed';
-  src: url('/assets/fonts/DINCondensed-Bold.ttf') format('truetype'); /* Ajuste o caminho se necessário */
-}
-
-body {
+/* Fundo com imagem e gradiente escuro */
+body, html {
+  height: 100%;
   margin: 0;
-  padding: 0;
-  background: url('/src/assets/fundo-site-login.jpg');
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+              url('/assets/fundo-site-login.jpg') no-repeat center center fixed;
   background-size: cover;
-  font-family: 'DIN Condensed', 'Arial Narrow', sans-serif;
+  font-family: 'Arial', sans-serif;
 }
 
+/* Container do login */
 .login-container {
   max-width: 420px;
   margin: 80px auto;
@@ -21,11 +19,13 @@ body {
   text-align: center;
 }
 
+/* Título */
 .login-container h2 {
   font-size: 1.5rem;
   margin-bottom: 12px;
 }
 
+/* Slogan */
 .slogan {
   font-weight: bold;
   color: #b60000;
@@ -33,12 +33,14 @@ body {
   font-size: 1.2rem;
 }
 
+/* Formulário */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
+/* Campos */
 .login-form input {
   padding: 12px;
   border: 1px solid #ccc;
@@ -46,6 +48,7 @@ body {
   font-size: 16px;
 }
 
+/* Botão */
 button {
   padding: 12px;
   background: #111;
@@ -62,42 +65,23 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Mensagem de erro */
 .erro {
   color: red;
   margin-top: 12px;
 }
 
+/* Links */
 .alternar {
   margin-top: 24px;
   font-size: 0.95rem;
 }
 
-.login-bg {
-  position: relative;
-  height: 100vh;
-  background: url('/assets/fundo-site-login.jpg') no-repeat center center fixed;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'DIN Condensed', 'Arial Narrow', sans-serif;
+.alternar a {
+  color: #4B9EBF;
+  text-decoration: none;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85));
-  z-index: 0;
-}
-
-.login-container {
-  position: relative;
-  z-index: 1;
-  max-width: 420px;
-  margin: 80px auto;
-  padding: 30px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  text-align: center;
+.alternar a:hover {
+  text-decoration: underline;
 }

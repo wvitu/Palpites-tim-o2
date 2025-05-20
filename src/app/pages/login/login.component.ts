@@ -56,9 +56,9 @@ export class LoginComponent {
         return;
       }
 
-      const grupoId = usuarioData?.grupoId || 'default';
-      const nome = usuarioData?.nome || this.email;
-      const admin = usuarioData?.admin === true;
+      const grupoId = usuarioData?.['grupoId'] || 'default';
+      const nome = usuarioData?.['nome'] || this.email;
+      const admin = usuarioData?.['admin'] === true;
 
       this.authService.setUsuario(uid, nome, grupoId, admin);
       this.router.navigate(['/']);
