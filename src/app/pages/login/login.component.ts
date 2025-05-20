@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { Auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
@@ -18,10 +17,10 @@ export class LoginComponent {
   modo: 'login' | 'cadastro' = 'login';
 
   constructor(
-    private authService: AuthService,
-    private afAuth: Auth,
     private firestore: Firestore,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private afAuth: Auth
   ) {}
 
   async autenticar() {
@@ -35,51 +34,37 @@ export class LoginComponent {
     }
 
     try {
+      let credenciais;
       if (this.modo === 'cadastro') {
-        // Cria usuário com Firebase Auth
-        const credenciais = await createUserWithEmailAndPassword(this.afAuth, this.email, this.senha);
-
-        // Exemplo de criação de dados no Firestore
+        credenciais = await createUserWithEmailAndPassword(this.afAuth, this.email, this.senha);
         const uid = credenciais.user.uid;
-        const grupoId = `grupo-${uid.substring(0, 5)}`; // exemplo de grupo automático
-        const membroRef = doc(this.firestore, `grupos/${grupoId}/membros/${uid}`);
-
-        await setDoc(membroRef, {
-          nome: this.email.split('@')[0],
+        await setDoc(doc(this.firestore, `usuarios/${uid}`), {
+          nome: this.email,
           admin: true,
-          criadoEm: new Date()
         });
-
-        this.authService.setUsuario(uid, this.email.split('@')[0], grupoId, true);
-        this.router.navigate(['/']);
       } else {
-        // Login
-        const credenciais = await signInWithEmailAndPassword(this.afAuth, this.email, this.senha);
-        const uid = credenciais.user.uid;
-
-        const grupoId = await this.authService.encontrarGrupoPorUid(uid, this.firestore);
-        if (!grupoId) {
-          this.erro = 'Grupo não encontrado.';
-          this.carregando = false;
-          return;
-        }
-
-        const membroRef = doc(this.firestore, `grupos/${grupoId}/membros/${uid}`);
-        const membroSnap = await getDoc(membroRef);
-
-        if (!membroSnap.exists()) {
-          this.erro = 'Usuário não encontrado no grupo.';
-          this.carregando = false;
-          return;
-        }
-
-        const membro = membroSnap.data();
-        this.authService.setUsuario(uid, membro['nome'], grupoId, membro['admin'] === true);
-        this.router.navigate(['/']);
+        credenciais = await signInWithEmailAndPassword(this.afAuth, this.email, this.senha);
       }
+
+      const uid = credenciais.user.uid;
+      const usuarioDoc = await getDoc(doc(this.firestore, `usuarios/${uid}`));
+      const usuarioData = usuarioDoc.data();
+
+      if (!usuarioDoc.exists()) {
+        this.erro = 'Usuário sem dados no Firestore.';
+        this.carregando = false;
+        return;
+      }
+
+      const grupoId = usuarioData?.grupoId || 'default';
+      const nome = usuarioData?.nome || this.email;
+      const admin = usuarioData?.admin === true;
+
+      this.authService.setUsuario(uid, nome, grupoId, admin);
+      this.router.navigate(['/']);
     } catch (e: any) {
       console.error('Erro na autenticação:', e);
-      this.erro = e.message || 'Erro ao conectar. Tente novamente.';
+      this.erro = 'Erro ao conectar. Tente novamente.';
     }
 
     this.carregando = false;
@@ -91,17 +76,17 @@ export class LoginComponent {
   }
 
   async enviarResetSenha() {
-  if (!this.email) {
-    this.erro = 'Digite seu e-mail para redefinir a senha.';
-    return;
-  }
+    if (!this.email) {
+      this.erro = 'Digite seu e-mail para redefinir a senha.';
+      return;
+    }
 
-  try {
-    await sendPasswordResetEmail(getAuth(), this.email);
-    alert('Enviamos um link para redefinir sua senha no e-mail informado.');
-  } catch (e) {
-    console.error('Erro ao enviar e-mail de redefinição:', e);
-    this.erro = 'Erro ao enviar e-mail de redefinição.';
+    try {
+      await sendPasswordResetEmail(this.afAuth, this.email);
+      alert('Enviamos um link para redefinir sua senha no e-mail informado.');
+    } catch (e) {
+      console.error('Erro ao enviar e-mail de redefinição:', e);
+      this.erro = 'Erro ao enviar e-mail de redefinição.';
+    }
   }
-}
 }
