@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/services/auth.service';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 @Component({
   selector: 'app-login',
@@ -89,4 +89,19 @@ export class LoginComponent {
     this.modo = this.modo === 'login' ? 'cadastro' : 'login';
     this.erro = '';
   }
+
+  async enviarResetSenha() {
+  if (!this.email) {
+    this.erro = 'Digite seu e-mail para redefinir a senha.';
+    return;
+  }
+
+  try {
+    await sendPasswordResetEmail(getAuth(), this.email);
+    alert('Enviamos um link para redefinir sua senha no e-mail informado.');
+  } catch (e) {
+    console.error('Erro ao enviar e-mail de redefinição:', e);
+    this.erro = 'Erro ao enviar e-mail de redefinição.';
+  }
+}
 }

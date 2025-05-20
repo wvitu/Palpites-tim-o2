@@ -1,23 +1,26 @@
 <div class="login-container">
-  <h2>Login</h2>
+  <h2>{{ modo === 'login' ? 'Entrar' : 'Criar conta' }}</h2>
+  <p class="slogan">Bem-vindo ao APP de Palpites do Bando de Loucos! VAI CORINTHIANS!</p>
 
-  <div class="slogan">
-    Bem-vindo ao APP de Palpites do Bando de Loucos!<br />
-    <strong>VAI CORINTHIANS!</strong>
-  </div>
+  <form class="login-form" (submit)="autenticar(); $event.preventDefault()">
+    <input type="email" placeholder="Seu e-mail" [(ngModel)]="email" name="email" required />
+    <input type="password" placeholder="Sua senha" [(ngModel)]="senha" name="senha" required />
 
-  <form (submit)="autenticar()" class="login-form">
-    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
-    <input type="password" placeholder="Senha" [(ngModel)]="senha" name="senha" required />
-
-    <button type="submit" [disabled]="carregando">
-      {{ carregando ? 'Entrando...' : 'Entrar' }}
+    <button [disabled]="carregando">
+      {{ modo === 'login' ? 'Entrar' : 'Criar conta' }}
     </button>
   </form>
 
-  <div *ngIf="erro" class="erro">{{ erro }}</div>
+  <div class="erro" *ngIf="erro">{{ erro }}</div>
 
   <div class="alternar">
-    Não tem uma conta? <a routerLink="/cadastro">Criar agora</a>
+    <a href="#" (click)="alternarModo(); $event.preventDefault()">
+      {{ modo === 'login' ? 'Criar nova conta' : 'Já tem conta? Entrar' }}
+    </a>
   </div>
+  <div class="forgot-password" (click)="enviarResetSenha()">
+  Esqueci minha senha
 </div>
+</div>
+
+//Teste 
