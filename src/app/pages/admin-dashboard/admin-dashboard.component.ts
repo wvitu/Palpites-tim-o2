@@ -1,54 +1,54 @@
-import { Component, OnInit } from '@angular/core';
-import { PalpiteService } from 'src/app/services/palpite.service';
+import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminDashboardComponent implements OnInit {
-  nome: string = '';
+export class AdminDashboardComponent {
+  email: string = '';
   senha: string = '';
-  membros: { nome: string, admin: boolean }[] = [];
+  nome: string = '';
+  mensagem: string = '';
   erro: string = '';
-  sucesso: string = '';
 
   constructor(
-    private palpiteService: PalpiteService,
-    public auth: AuthService
+    private auth: Auth,
+    private firestore: Firestore,
+    private authService: AuthService
   ) {}
 
-  async ngOnInit() {
-    if (!this.auth.isAdminUser()) {
-      this.erro = 'Acesso restrito. Somente administradores.';
-      return;
-    }
-    await this.carregarMembros();
-  }
-
-  async adicionarMembro() {
+  async criarPalpiteiro() {
     this.erro = '';
-    this.sucesso = '';
+    this.mensagem = '';
 
-    if (!this.nome || !this.senha) {
-      this.erro = 'Preencha nome e senha.';
+    if (!this.email || !this.senha || !this.nome) {
+      this.erro = 'Preencha todos os campos';
       return;
     }
 
     try {
-      await this.palpiteService.adicionarMembroGrupo(this.nome, this.senha);
-      this.sucesso = `Membro ${this.nome} adicionado com sucesso!`;
-      this.nome = '';
-      this.senha = '';
-      await this.carregarMembros();
-    } catch (e) {
-      console.error(e);
-      this.erro = 'Erro ao adicionar membro.';
-    }
-  }
+      const cred = await createUserWithEmailAndPassword(this.auth, this.email, this.senha);
+      const uid = cred.user.uid;
+      const ref = doc(this.firestore, `usuarios/${uid}`);
 
-  async carregarMembros() {
-    this.membros = await this.palpiteService.getMembrosGrupo();
+      await setDoc(ref, {
+        email: this.email,
+        nome: this.nome,
+        admin: false,
+        grupoId: this.authService.getGrupoId()
+      });
+
+      this.mensagem = `Palpiteiro ${this.nome} criado com sucesso!`;
+      this.email = '';
+      this.senha = '';
+      this.nome = '';
+    } catch (e: any) {
+      console.error('Erro ao criar palpiteiro:', e);
+      this.erro = 'Erro ao criar palpiteiro. Tente novamente.';
+    }
   }
 }

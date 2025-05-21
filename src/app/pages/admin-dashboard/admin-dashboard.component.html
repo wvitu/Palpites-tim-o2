@@ -1,28 +1,17 @@
-<div class="admin-container" *ngIf="auth.isAdminUser(); else acessoNegado">
+<div class="admin-dashboard">
+  <h2>🏁 Criar novo palpiteiro</h2>
 
-  <h2>Painel do Administrador</h2>
+  <form (submit)="criarPalpiteiro(); $event.preventDefault()" class="formulario">
+    <input type="text" placeholder="Nome do palpiteiro" [(ngModel)]="nome" name="nome" required />
+    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
+    <input type="password" placeholder="Senha" [(ngModel)]="senha" name="senha" required />
 
-  <div class="form-bloco">
-    <label>Nome do Novo Membro:</label>
-    <input [(ngModel)]="nome" placeholder="Ex: Joao" />
+    <button [disabled]="carregando" type="submit">
+      {{ carregando ? 'Criando...' : 'Criar Palpiteiro' }}
+    </button>
+  </form>
 
-    <label>Senha:</label>
-    <input [(ngModel)]="senha" type="password" />
-
-    <button (click)="adicionarMembro()">Adicionar Membro</button>
+  <div *ngIf="mensagem" class="mensagem">
+    {{ mensagem }}
   </div>
-
-  <p *ngIf="erro" class="erro-msg">{{ erro }}</p>
-  <p *ngIf="sucesso" class="sucesso-msg">{{ sucesso }}</p>
-
-  <h3>Membros do Clube:</h3>
-  <ul>
-    <li *ngFor="let m of membros">
-      {{ m.nome }} <span *ngIf="m.admin"> (admin)</span>
-    </li>
-  </ul>
 </div>
-
-<ng-template #acessoNegado>
-  <p>Acesso negado. Você precisa ser administrador para visualizar esta página.</p>
-</ng-template>

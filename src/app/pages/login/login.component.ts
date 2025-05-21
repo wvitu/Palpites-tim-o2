@@ -86,7 +86,16 @@ export class LoginComponent {
       }
     } catch (e: any) {
       console.error('Erro na autenticação:', e);
-      this.erro = 'Erro ao conectar. Tente novamente.';
+
+      if (e.code === 'auth/email-already-in-use') {
+        this.erro = 'Este e-mail já está em uso. Tente fazer login.';
+      } else if (e.code === 'auth/invalid-email') {
+        this.erro = 'E-mail inválido.';
+      } else if (e.code === 'auth/weak-password') {
+        this.erro = 'A senha deve ter pelo menos 6 caracteres.';
+      } else {
+        this.erro = 'Erro ao conectar. Tente novamente.';
+      }
     } finally {
       this.carregando = false;
     }
