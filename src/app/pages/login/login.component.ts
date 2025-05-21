@@ -1,8 +1,19 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
-import { environment } from 'src/environments/environment';
+import {
+  Firestore,
+  doc,
+  getDoc,
+  setDoc
+} from '@angular/fire/firestore';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+} from '@angular/fire/auth';
+import { getAuth } from 'firebase/auth';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,52 +25,86 @@ export class LoginComponent {
   senha: string = '';
   erro: string = '';
   carregando: boolean = false;
+  modo: 'login' | 'cadastro' = 'login';
 
-  constructor(private router: Router) {}
+  constructor(
+    private firestore: Firestore,
+    private authService: AuthService,
+    private router: Router,
+    public afAuth: Auth
+  ) {}
 
   async autenticar() {
     this.erro = '';
     this.carregando = true;
+    console.log('🔐 Iniciando autenticação...');
 
     try {
-      const auth = getAuth();
-      const cred = await signInWithEmailAndPassword(auth, this.email, this.senha);
+      if (this.modo === 'cadastro') {
+        console.log('👤 Criando nova conta...');
+        const cred = await createUserWithEmailAndPassword(
+          this.afAuth,
+          this.email,
+          this.senha
+        );
 
-      const uid = cred.user.uid;
-      const db = getFirestore();
-      const docRef = doc(db, 'usuarios', uid);
-      const docSnap = await getDoc(docRef);
+        const uid = cred.user.uid;
+        const ref = doc(this.firestore, `usuarios/${uid}`);
+        await setDoc(ref, {
+          email: this.email,
+          admin: false // padrão: não admin
+        });
 
-      if (!docSnap.exists()) {
-        this.erro = 'Usuário sem dados no Firestore.';
-        return;
+        this.authService.setUsuario(uid, this.email, 'default', false);
+        this.router.navigate(['/']);
+      } else {
+        console.log('🔑 Logando usuário...');
+        const cred = await signInWithEmailAndPassword(
+          this.afAuth,
+          this.email,
+          this.senha
+        );
+
+        console.log('✅ Usuário autenticado:', cred.user);
+        const uid = cred.user.uid;
+        const ref = doc(this.firestore, `usuarios/${uid}`);
+        const usuarioDoc = await getDoc(ref);
+
+        if (!usuarioDoc.exists()) {
+          this.erro = 'Usuário sem dados no sistema.';
+          this.carregando = false;
+          return;
+        }
+
+        const usuarioData = usuarioDoc.data();
+        const grupoId = usuarioData?.['grupoId'] || 'default';
+        const nome = usuarioData?.['nome'] || this.email;
+        const admin = usuarioData?.['admin'] === true;
+
+        this.authService.setUsuario(uid, nome, grupoId, admin);
+        this.router.navigate(['/']);
       }
-
-      const dados = docSnap.data();
-      console.log('Usuário logado:', dados);
-
-      this.router.navigate(['/']);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Erro na autenticação:', e);
       this.erro = 'Erro ao conectar. Tente novamente.';
+    } finally {
+      this.carregando = false;
     }
+  }
 
-    this.carregando = false;
+  alternarModo() {
+    this.modo = this.modo === 'login' ? 'cadastro' : 'login';
+    this.erro = '';
   }
 
   async enviarResetSenha() {
-    if (!this.email) {
-      this.erro = 'Informe um e-mail válido para redefinir a senha.';
-      return;
-    }
-
     try {
       const auth = getAuth();
       await sendPasswordResetEmail(auth, this.email);
-      alert('E-mail de recuperação enviado com sucesso.');
-    } catch (e) {
+      alert('Email de redefinição de senha enviado.');
+    } catch (e: any) {
       console.error('Erro ao enviar redefinição:', e);
-      this.erro = 'Erro ao enviar e-mail de recuperação.';
+      this.erro = 'Não foi possível enviar o email de redefinição.';
     }
   }
 }
