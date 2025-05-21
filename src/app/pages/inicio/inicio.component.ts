@@ -29,6 +29,7 @@ export class InicioComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    console.log('🔒 É admin?', this.authService.isAdminUser());
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state as any;
 

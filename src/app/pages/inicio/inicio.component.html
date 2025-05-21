@@ -11,7 +11,7 @@
 
 <!-- Card para ADMIN criar nova partida -->
 <app-match-info
-*ngIf="registrandoNovaPartida && authService.isAdminUser()"
+  *ngIf="registrandoNovaPartida && authService.isAdminUser()"
   (jogoAtualizado)="atualizarJogo($event)"
   (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
 </app-match-info>

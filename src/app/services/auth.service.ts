@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { getAuth, signOut } from 'firebase/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -25,7 +24,7 @@ export class AuthService {
 
     localStorage.setItem(
       'usuario',
-      JSON.stringify({ uid, nome, grupoId, isAdmin: admin })
+      JSON.stringify({ uid, nome, grupoId, admin }) // ✅ salva como 'admin' para padronizar
     );
   }
 
@@ -33,10 +32,11 @@ export class AuthService {
     const dados = localStorage.getItem('usuario');
     if (dados) {
       const user = JSON.parse(dados);
+      console.log('🧠 Dados carregados da sessão:', user); // 👈 debug
       this.uid = user.uid;
       this.nome = user.nome;
       this.grupoId = user.grupoId;
-      this.isAdmin = user.isAdmin;
+      this.isAdmin = user.admin === true || user.admin === 'true';
     }
   }
 
@@ -58,20 +58,18 @@ export class AuthService {
   }
 
   isAdminUser(): boolean {
-      return this.isAdmin === true;
+    return this.isAdmin;
   }
 
   getUid(): string {
     return this.uid;
   }
+
   async encontrarGrupoPorUid(uid: string, firestore: Firestore): Promise<string | null> {
-  const gruposRef = doc(firestore, `grupos/lista`);
-  const snapshot = await getDoc(gruposRef); // se tiver algum índice, substitua por consulta ideal
-  // Aqui você deverá implementar uma maneira de localizar em qual grupo está o uid
+    const gruposRef = doc(firestore, `grupos/lista`);
+    const snapshot = await getDoc(gruposRef);
 
-  // Exemplo básico:
-  // Iterar manualmente todos os grupos seria inviável em produção, aqui é apenas ilustração:
-  return `grupo-algumaCoisa`; // substitua por lógica real
-}
-
+    // Implementação real depende da estrutura do Firestore
+    return `grupo-algumaCoisa`; // substitua com lógica real
+  }
 }

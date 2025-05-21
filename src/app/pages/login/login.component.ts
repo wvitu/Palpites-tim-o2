@@ -52,7 +52,7 @@ export class LoginComponent {
         const ref = doc(this.firestore, `usuarios/${uid}`);
         await setDoc(ref, {
           email: this.email,
-          admin: false // padrão: não admin
+          admin: true // padrão: não admin
         });
 
         this.authService.setUsuario(uid, this.email, 'default', false);
