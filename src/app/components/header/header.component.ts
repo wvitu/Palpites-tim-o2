@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -6,12 +6,14 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
-  isAdmin: boolean = false;
-
+export class HeaderComponent {
   constructor(public auth: AuthService) {}
 
-  ngOnInit(): void {
-    this.isAdmin = this.auth.isAdminUser();
+  isAdmin(): boolean {
+    return this.auth.isAdminUser(); // precisa retornar true se o usuário for admin
+  }
+
+  estaLogado(): boolean {
+    return this.auth.estaLogado();
   }
 }

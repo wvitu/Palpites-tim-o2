@@ -58,7 +58,7 @@ export class AuthService {
   }
 
   isAdminUser(): boolean {
-    return this.isAdmin;
+      return this.isAdmin === true;
   }
 
   getUid(): string {

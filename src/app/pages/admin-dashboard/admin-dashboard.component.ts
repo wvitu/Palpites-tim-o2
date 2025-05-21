@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { AuthService } from 'src/app/services/auth.service';
-import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import {
+  Auth,
+  createUserWithEmailAndPassword
+} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -9,46 +11,38 @@ import { Firestore, doc, setDoc } from '@angular/fire/firestore';
   styleUrls: ['./admin-dashboard.component.css']
 })
 export class AdminDashboardComponent {
+  nome: string = '';
   email: string = '';
   senha: string = '';
-  nome: string = '';
   mensagem: string = '';
-  erro: string = '';
+  carregando: boolean = false;
 
-  constructor(
-    private auth: Auth,
-    private firestore: Firestore,
-    private authService: AuthService
-  ) {}
+  constructor(private firestore: Firestore, private auth: Auth) {}
 
   async criarPalpiteiro() {
-    this.erro = '';
     this.mensagem = '';
-
-    if (!this.email || !this.senha || !this.nome) {
-      this.erro = 'Preencha todos os campos';
-      return;
-    }
+    this.carregando = true;
 
     try {
       const cred = await createUserWithEmailAndPassword(this.auth, this.email, this.senha);
       const uid = cred.user.uid;
-      const ref = doc(this.firestore, `usuarios/${uid}`);
 
-      await setDoc(ref, {
-        email: this.email,
+      await setDoc(doc(this.firestore, `usuarios/${uid}`), {
         nome: this.nome,
-        admin: false,
-        grupoId: this.authService.getGrupoId()
+        email: this.email,
+        grupoId: 'default',
+        admin: false
       });
 
-      this.mensagem = `Palpiteiro ${this.nome} criado com sucesso!`;
+      this.mensagem = '✅ Palpiteiro criado com sucesso!';
+      this.nome = '';
       this.email = '';
       this.senha = '';
-      this.nome = '';
     } catch (e: any) {
       console.error('Erro ao criar palpiteiro:', e);
-      this.erro = 'Erro ao criar palpiteiro. Tente novamente.';
+      this.mensagem = '❌ Erro ao criar palpiteiro. ' + (e.message || '');
     }
+
+    this.carregando = false;
   }
 }
