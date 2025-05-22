@@ -25,6 +25,11 @@
             *ngIf="isAdmin">
       Confirmar Resultado
     </button>
+    <div *ngIf="mensagensAcerto.length" class="mt-4 space-y-1 text-sm text-gray-200 bg-black/30 p-3 rounded-md shadow-inner border border-white/10">
+  <div *ngFor="let msg of mensagensAcerto">
+    <span class="block">{{ msg }}</span>
+  </div>
+</div>
 
     <!-- Feedback -->
     <p class="text-xs text-green-400 text-center" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</p>
