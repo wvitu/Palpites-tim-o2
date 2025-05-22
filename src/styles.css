@@ -3,8 +3,14 @@
 @tailwind utilities;
 
 /* Custom overrides */
+
 body {
-  @apply bg-neutral-900 text-white;
+  @apply bg-fixed bg-cover bg-center text-white;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+    url('./assets/fundo-site.jpg');
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
 }
 
 button {
