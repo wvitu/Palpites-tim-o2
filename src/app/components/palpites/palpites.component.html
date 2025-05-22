@@ -1,55 +1,72 @@
-<section class="palpites-section" *ngIf="palpiteiros.length">
-  <h2 class="section-title">Palpites da Rodada</h2>
+<section class="py-4 animate-fade-in" *ngIf="palpiteiros.length">
+  <h2 class="text-white text-2xl font-semibold text-center mb-6">Palpites da Rodada</h2>
 
-  <div class="palpites-grid">
-    <div class="palpite-card" *ngFor="let nome of palpiteiros">
-  <p>{{ palpites[nome]?.nomeExibicao || nome }}</p>
-      <!-- Header com avatar -->
-      <div class="card-header">
-        <div class="avatar">{{ nome.charAt(0).toUpperCase() }}</div>
-        <h3 class="user-name">{{ nome }}</h3>
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 px-4">
+    <div *ngFor="let nome of palpiteiros"
+         class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-md p-5 text-white relative">
+
+      <div class="absolute top-4 right-4 text-xs text-white/70">
+        {{ palpites[nome]?.nomeExibicao || nome }}
       </div>
 
-      <!-- Informações da partida -->
-      <div class="palpite-block">
-        <label>Adversário: {{ adversario }}</label><br />
-        <small>{{ dataHora }} - {{ local }}</small>
+      <!-- Avatar + Nome -->
+      <div class="flex items-center mb-4">
+        <div class="w-10 h-10 bg-white text-black font-bold rounded-full flex items-center justify-center mr-3">
+          {{ nome.charAt(0).toUpperCase() }}
+        </div>
+        <h3 class="text-lg font-semibold truncate">{{ nome }}</h3>
+      </div>
+
+      <!-- Info da Partida -->
+      <div class="text-sm mb-3">
+        <div>Adversário: <strong>{{ adversario }}</strong></div>
+        <div class="text-white/80 text-xs">{{ dataHora }} - {{ local }}</div>
       </div>
 
       <!-- Palpite Torcedor -->
-      <div class="palpite-block">
-        <label>Palpite Torcedor</label>
-        <div class="placar-input">
-          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.casa" name="tc-{{ nome }}" placeholder="Corinthians" />
-          <span>x</span>
-          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.visitante" name="tv-{{ nome }}" placeholder="{{ adversario }}" />
+      <div class="mb-4">
+        <label class="block text-sm mb-1">Palpite Torcedor</label>
+        <div class="flex items-center gap-2">
+          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.casa"
+                 class="w-14 text-center rounded-lg text-black px-1 py-0.5"
+                 placeholder="Cor" />
+          <span class="text-white font-bold">x</span>
+          <input type="number" min="0" [(ngModel)]="palpites[nome].torcedor.visitante"
+                 class="w-14 text-center rounded-lg text-black px-1 py-0.5"
+                 [placeholder]="adversario" />
         </div>
-        <div *ngIf="palpites[nome].torcedor.casa !== ''">
-          <small>Salvo: {{ palpites[nome].torcedor.casa }} x {{ palpites[nome].torcedor.visitante }}</small>
-        </div>
+        <small *ngIf="palpites[nome].torcedor.casa !== ''" class="text-white/70">
+          Salvo: {{ palpites[nome].torcedor.casa }} x {{ palpites[nome].torcedor.visitante }}
+        </small>
       </div>
 
       <!-- Palpite Realista -->
-      <div class="palpite-block">
-        <label>Palpite Realista</label>
-        <div class="placar-input">
-          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.casa" name="rc-{{ nome }}" placeholder="Corinthians" />
-          <span>x</span>
-          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.visitante" name="rv-{{ nome }}" placeholder="{{ adversario }}" />
+      <div class="mb-4">
+        <label class="block text-sm mb-1">Palpite Realista</label>
+        <div class="flex items-center gap-2">
+          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.casa"
+                 class="w-14 text-center rounded-lg text-black px-1 py-0.5"
+                 placeholder="Cor" />
+          <span class="text-white font-bold">x</span>
+          <input type="number" min="0" [(ngModel)]="palpites[nome].realista.visitante"
+                 class="w-14 text-center rounded-lg text-black px-1 py-0.5"
+                 [placeholder]="adversario" />
         </div>
-        <div *ngIf="palpites[nome].realista.casa !== ''">
-          <small>Salvo: {{ palpites[nome].realista.casa }} x {{ palpites[nome].realista.visitante }}</small>
-        </div>
+        <small *ngIf="palpites[nome].realista.casa !== ''" class="text-white/70">
+          Salvo: {{ palpites[nome].realista.casa }} x {{ palpites[nome].realista.visitante }}
+        </small>
       </div>
 
-      <!-- Botão de salvar -->
-      <button class="btn-salvar" [disabled]="salvando[nome]" (click)="salvarPalpites(nome)">
+      <!-- Botão salvar -->
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-1.5 rounded-xl transition disabled:opacity-50"
+              [disabled]="salvando[nome]"
+              (click)="salvarPalpites(nome)">
         {{ salvando[nome] ? 'Salvando...' : 'Salvar Palpites' }}
       </button>
 
-      <!-- Mensagens de feedback -->
-      <div *ngIf="mensagensErro[nome]" class="msg-erro">{{ mensagensErro[nome] }}</div>
-      <div *ngIf="mensagensSucesso[nome]" class="msg-sucesso">{{ mensagensSucesso[nome] }}</div>
+      <!-- Mensagens -->
+      <div *ngIf="mensagensErro[nome]" class="text-red-400 text-xs mt-2">{{ mensagensErro[nome] }}</div>
+      <div *ngIf="mensagensSucesso[nome]" class="text-green-400 text-xs mt-2">{{ mensagensSucesso[nome] }}</div>
     </div>
   </div>
 </section>
