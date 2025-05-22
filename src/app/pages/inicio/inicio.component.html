@@ -1,73 +1,72 @@
-<div class="flex flex-col items-center p-4 space-y-6">
+<!-- Botões de ação -->
+<div class="flex flex-col md:flex-row justify-center gap-4 my-6 animate-fade-in">
+  <button
+    *ngIf="authService.isAdminUser()"
+    (click)="iniciarRegistroPartida()"
+    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
+  >
+    Registrar Nova Partida
+  </button>
 
-  <!-- Botões -->
-  <div class="space-x-4">
-    <button
-      class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
-      *ngIf="authService.isAdminUser()"
-      (click)="iniciarRegistroPartida()">
-      Registrar Nova Partida
-    </button>
-
-    <button
-      class="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition"
-      (click)="iniciarSelecaoPartidaExistente()">
-      Consultar Partidas Futuras
-    </button>
-  </div>
-
-  <!-- Palpite Cards -->
-  <div class="grid md:grid-cols-2 gap-6 w-full max-w-6xl" *ngIf="adversario">
-
-    <div
-      *ngFor="let nome of palpiteiros"
-      class="bg-white p-6 rounded-2xl shadow-lg transition hover:shadow-xl">
-      <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ nome }}</h2>
-      <p class="text-sm text-gray-500 mb-4">Adversário: {{ adversario }}</p>
-
-      <!-- Palpite Torcedor -->
-      <label class="block text-gray-700 font-medium">Palpite Torcedor</label>
-      <input type="number" [(ngModel)]="palpitesRef[nome].torcedor.casa" placeholder="Corinthians"
-             class="w-full p-2 mt-1 mb-2 border rounded" />
-
-      <input type="number" [(ngModel)]="palpitesRef[nome].torcedor.visitante" placeholder="{{ adversario }}"
-             class="w-full p-2 mb-4 border rounded" />
-
-      <!-- Palpite Realista -->
-      <label class="block text-gray-700 font-medium">Palpite Realista</label>
-      <input type="number" [(ngModel)]="palpitesRef[nome].realista.casa" placeholder="Corinthians"
-             class="w-full p-2 mt-1 mb-2 border rounded" />
-
-      <input type="number" [(ngModel)]="palpitesRef[nome].realista.visitante" placeholder="{{ adversario }}"
-             class="w-full p-2 mb-4 border rounded" />
-
-      <button class="w-full bg-green-600 text-white rounded-xl py-2 hover:bg-green-700 transition">
-        Salvar Palpites
-      </button>
-    </div>
-
-  </div>
-
-  <!-- Classificação -->
-  <div class="w-full max-w-4xl mt-10">
-    <h3 class="text-center text-2xl font-bold mb-4 text-white bg-black/70 py-2 rounded">Classificação</h3>
-    <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
-      <thead class="bg-gray-100 text-gray-700 text-left">
-        <tr>
-          <th class="p-3">Posição</th>
-          <th class="p-3">Participante</th>
-          <th class="p-3">Pontos</th>
-          <th class="p-3">Acertos</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let jogador of getClassificacao(); index as i" class="border-b hover:bg-gray-50">
-          <td class="p-3 font-bold text-indigo-600">#{{ i + 1 }}</td>
-          <td class="p-3">{{ jogador.nome }}</td>
-          <td class="p-3">{{ jogador.pontos }}</td>
-          <td class="p-3">{{ jogador.acertos }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <button
+    (click)="iniciarSelecaoPartidaExistente()"
+    class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
+  >
+    Consultar Partidas Futuras
+  </button>
 </div>
+
+<!-- Card para ADMIN criar nova partida -->
+<div *ngIf="registrandoNovaPartida && authService.isAdminUser()" class="animate-slide-in">
+  <app-match-info
+    (jogoAtualizado)="atualizarJogo($event)"
+    (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
+  </app-match-info>
+</div>
+
+<!-- Lista de partidas futuras -->
+<div *ngIf="selecionandoPartida" class="mt-6 animate-fade-in">
+  <h3 class="text-center text-xl font-bold mb-4">Partidas Disponíveis para Palpite</h3>
+
+  <div *ngIf="partidasFuturas.length === 0" class="text-center text-gray-500">
+    Nenhuma partida futura encontrada.
+  </div>
+
+  <ul *ngIf="partidasFuturas.length > 0" class="flex flex-col gap-4 items-center">
+    <li *ngFor="let partida of partidasFuturas" class="bg-white rounded-xl shadow-md px-6 py-4 w-full max-w-md text-center">
+      <p class="font-semibold">{{ partida.dataHora }}</p>
+      <p class="text-gray-700">{{ partida.adversario }} <span class="text-sm text-gray-500">({{ partida.local }})</span></p>
+      <button
+        (click)="selecionarPartida(partida)"
+        class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded-lg transition"
+      >
+        Selecionar Partida
+      </button>
+    </li>
+  </ul>
+</div>
+
+<!-- Palpites -->
+<app-palpites
+  [adversario]="adversario"
+  [dataHora]="dataHora"
+  [local]="local"
+  [palpiteiros]="palpiteiros"
+  [partidaId]="partidaId"
+  [palpitesPreCarregados]="palpitesRef"
+  (palpitesChange)="receberPalpites($event)">
+</app-palpites>
+
+<!-- Resultado final -->
+<app-resultado-final
+  [palpites]="palpitesRef"
+  [palpiteiros]="palpiteiros"
+  [adversario]="adversario"
+  [dataHora]="dataHora"
+  [local]="local"
+  [isAdmin]="authService.isAdminUser()"
+  (pontuacoesAtualizadas)="atualizarPontuacao($event)">
+</app-resultado-final>
+
+<!-- Classificação -->
+<app-classificacao [classificacao]="getClassificacao()"></app-classificacao>
