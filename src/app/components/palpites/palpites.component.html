@@ -3,6 +3,7 @@
 
   <div class="palpites-grid">
     <div class="palpite-card" *ngFor="let nome of palpiteiros">
+  <p>{{ palpites[nome]?.nomeExibicao || nome }}</p>
       <!-- Header com avatar -->
       <div class="card-header">
         <div class="avatar">{{ nome.charAt(0).toUpperCase() }}</div>

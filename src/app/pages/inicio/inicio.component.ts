@@ -26,11 +26,14 @@ export class InicioComponent implements OnInit {
     private router: Router,
     private palpiteService: PalpiteService,
     public authService: AuthService
-  ) {}
+  ) { }
 
   async ngOnInit(): Promise<void> {
-  console.log('🔎 isAdmin? =>', this.authService.isAdminUser());
-  console.log('🔎 Usuário atual:', this.authService.getUsuario());
+    console.log('🔎 isAdmin? =>', this.authService.isAdminUser());
+    console.log('🔎 Usuário atual:', this.authService.getUsuario());
+
+    const membros = await this.palpiteService.getMembrosGrupo();
+    this.palpiteiros = membros.map(m => m.nome); // <-- isso deve popular os cards
     const navigation = this.router.getCurrentNavigation();
     const state = navigation?.extras?.state as any;
 

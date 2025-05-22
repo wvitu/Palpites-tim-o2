@@ -1,57 +1,73 @@
-<!-- Botões de ação -->
-<div class="botoes-inicio" style="text-align: center; margin: 20px 0;">
-  <button *ngIf="authService.isAdminUser()" (click)="iniciarRegistroPartida()">
-    Registrar Nova Partida
-  </button>
+<div class="flex flex-col items-center p-4 space-y-6">
 
-  <button (click)="iniciarSelecaoPartidaExistente()">
-    Consultar Partidas Futuras
-  </button>
-</div>
+  <!-- Botões -->
+  <div class="space-x-4">
+    <button
+      class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
+      *ngIf="authService.isAdminUser()"
+      (click)="iniciarRegistroPartida()">
+      Registrar Nova Partida
+    </button>
 
-<!-- Card para ADMIN criar nova partida -->
-<app-match-info
-  *ngIf="registrandoNovaPartida && authService.isAdminUser()"
-  (jogoAtualizado)="atualizarJogo($event)"
-  (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
-</app-match-info>
-
-<!-- Lista de partidas futuras -->
-<div *ngIf="selecionandoPartida">
-  <h3 style="text-align: center; margin-bottom: 16px;">Partidas Disponíveis para Palpite</h3>
-  <div *ngIf="partidasFuturas.length === 0" style="text-align: center;">
-    Nenhuma partida futura encontrada.
+    <button
+      class="px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition"
+      (click)="iniciarSelecaoPartidaExistente()">
+      Consultar Partidas Futuras
+    </button>
   </div>
-  <ul *ngIf="partidasFuturas.length > 0" style="list-style: none; padding: 0;">
-    <li *ngFor="let partida of partidasFuturas" style="margin-bottom: 12px; text-align: center;">
-      <strong>{{ partida.dataHora }}</strong> - {{ partida.adversario }} ({{ partida.local }})
-      <br />
-      <button (click)="selecionarPartida(partida)">Selecionar Partida</button>
-    </li>
-  </ul>
+
+  <!-- Palpite Cards -->
+  <div class="grid md:grid-cols-2 gap-6 w-full max-w-6xl" *ngIf="adversario">
+
+    <div
+      *ngFor="let nome of palpiteiros"
+      class="bg-white p-6 rounded-2xl shadow-lg transition hover:shadow-xl">
+      <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ nome }}</h2>
+      <p class="text-sm text-gray-500 mb-4">Adversário: {{ adversario }}</p>
+
+      <!-- Palpite Torcedor -->
+      <label class="block text-gray-700 font-medium">Palpite Torcedor</label>
+      <input type="number" [(ngModel)]="palpitesRef[nome].torcedor.casa" placeholder="Corinthians"
+             class="w-full p-2 mt-1 mb-2 border rounded" />
+
+      <input type="number" [(ngModel)]="palpitesRef[nome].torcedor.visitante" placeholder="{{ adversario }}"
+             class="w-full p-2 mb-4 border rounded" />
+
+      <!-- Palpite Realista -->
+      <label class="block text-gray-700 font-medium">Palpite Realista</label>
+      <input type="number" [(ngModel)]="palpitesRef[nome].realista.casa" placeholder="Corinthians"
+             class="w-full p-2 mt-1 mb-2 border rounded" />
+
+      <input type="number" [(ngModel)]="palpitesRef[nome].realista.visitante" placeholder="{{ adversario }}"
+             class="w-full p-2 mb-4 border rounded" />
+
+      <button class="w-full bg-green-600 text-white rounded-xl py-2 hover:bg-green-700 transition">
+        Salvar Palpites
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Classificação -->
+  <div class="w-full max-w-4xl mt-10">
+    <h3 class="text-center text-2xl font-bold mb-4 text-white bg-black/70 py-2 rounded">Classificação</h3>
+    <table class="min-w-full bg-white rounded-lg shadow overflow-hidden">
+      <thead class="bg-gray-100 text-gray-700 text-left">
+        <tr>
+          <th class="p-3">Posição</th>
+          <th class="p-3">Participante</th>
+          <th class="p-3">Pontos</th>
+          <th class="p-3">Acertos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let jogador of getClassificacao(); index as i" class="border-b hover:bg-gray-50">
+          <td class="p-3 font-bold text-indigo-600">#{{ i + 1 }}</td>
+          <td class="p-3">{{ jogador.nome }}</td>
+          <td class="p-3">{{ jogador.pontos }}</td>
+          <td class="p-3">{{ jogador.acertos }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-
-<!-- Palpites (liberado após seleção ou registro de partida) -->
-<app-palpites
-  [adversario]="adversario"
-  [dataHora]="dataHora"
-  [local]="local"
-  [palpiteiros]="palpiteiros"
-  [partidaId]="partidaId"
-  [palpitesPreCarregados]="palpitesRef"
-  (palpitesChange)="receberPalpites($event)">
-</app-palpites>
-
-<!-- Resultado do jogo -->
-<app-resultado-final
-  [palpites]="palpitesRef"
-  [palpiteiros]="palpiteiros"
-  [adversario]="adversario"
-  [dataHora]="dataHora"
-  [local]="local"
-  [isAdmin]="authService.isAdminUser()"
-  (pontuacoesAtualizadas)="atualizarPontuacao($event)">
-</app-resultado-final>
-
-<!-- Classificação atualizada -->
-<app-classificacao [classificacao]="getClassificacao()"></app-classificacao>

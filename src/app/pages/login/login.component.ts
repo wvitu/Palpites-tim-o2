@@ -23,6 +23,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent {
   email: string = '';
   senha: string = '';
+  nome: string = '';
   erro: string = '';
   carregando: boolean = false;
   modo: 'login' | 'cadastro' = 'login';

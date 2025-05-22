@@ -1,17 +1,24 @@
-<div class="admin-dashboard">
-  <h2>🏁 Criar novo palpiteiro</h2>
+<div class="painel-meu-clube">
+  <h2>👥 Palpiteiros do Grupo</h2>
 
-  <form (submit)="criarPalpiteiro(); $event.preventDefault()" class="formulario">
-    <input type="text" placeholder="Nome do palpiteiro" [(ngModel)]="nome" name="nome" required />
-    <input type="email" placeholder="Email" [(ngModel)]="email" name="email" required />
-    <input type="password" placeholder="Senha" [(ngModel)]="senha" name="senha" required />
+  <div *ngIf="palpiteiros.length === 0">
+    Nenhum palpiteiro cadastrado.
+  </div>
 
-    <button [disabled]="carregando" type="submit">
-      {{ carregando ? 'Criando...' : 'Criar Palpiteiro' }}
-    </button>
-  </form>
+  <ul *ngIf="palpiteiros.length > 0" style="list-style: none; padding: 0;">
+    <li *ngFor="let palpiteiro of palpiteiros" class="card-palpiteiro">
+      <strong *ngIf="palpiteiro === usuarioAtual">🔐 {{ palpiteiro }} (Você)</strong>
+      <span *ngIf="palpiteiro !== usuarioAtual">{{ palpiteiro }}</span>
 
-  <div *ngIf="mensagem" class="mensagem">
-    {{ mensagem }}
+      <button (click)="editarPalpiteiro(palpiteiro)">✏️</button>
+      <button (click)="removerPalpiteiro(palpiteiro)" [disabled]="palpiteiro === usuarioAtual">🗑️</button>
+    </li>
+  </ul>
+
+  <div class="form-novo-palpiteiro" style="margin-top: 20px;">
+    <h3>➕ Adicionar novo palpiteiro</h3>
+    <input [(ngModel)]="novoPalpiteiro" placeholder="Nome do novo palpiteiro" />
+    <input [(ngModel)]="senhaPalpiteiro" placeholder="Senha" type="password" />
+    <button (click)="adicionarNovoPalpiteiro()">Adicionar</button>
   </div>
 </div>

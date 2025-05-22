@@ -1,48 +1,53 @@
-import { Component } from '@angular/core';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
-import {
-  Auth,
-  createUserWithEmailAndPassword
-} from '@angular/fire/auth';
+import { Component, OnInit } from '@angular/core';
+import { PalpiteService } from 'src/app/services/palpite.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
-export class AdminDashboardComponent {
-  nome: string = '';
-  email: string = '';
-  senha: string = '';
-  mensagem: string = '';
-  carregando: boolean = false;
+export class AdminDashboardComponent implements OnInit {
+  palpiteiros: string[] = [];
+  usuarioAtual: string = '';
+  novoPalpiteiro: string = '';
+  senhaPalpiteiro: string = '';
 
-  constructor(private firestore: Firestore, private auth: Auth) {}
+  constructor(
+    private palpiteService: PalpiteService,
+    private authService: AuthService
+  ) {}
 
-  async criarPalpiteiro() {
-    this.mensagem = '';
-    this.carregando = true;
+  async ngOnInit() {
+    this.usuarioAtual = this.authService.getUsuario();
+    await this.carregarPalpiteiros();
+  }
 
-    try {
-      const cred = await createUserWithEmailAndPassword(this.auth, this.email, this.senha);
-      const uid = cred.user.uid;
+  async carregarPalpiteiros() {
+    const membros = await this.palpiteService.getMembrosGrupo();
+    this.palpiteiros = membros.map(m => m.nome);
+  }
 
-      await setDoc(doc(this.firestore, `usuarios/${uid}`), {
-        nome: this.nome,
-        email: this.email,
-        grupoId: 'default',
-        admin: false
-      });
+  async adicionarNovoPalpiteiro() {
+    if (!this.novoPalpiteiro || !this.senhaPalpiteiro) return;
+    await this.palpiteService.adicionarMembroGrupo(this.novoPalpiteiro, this.senhaPalpiteiro);
+    this.novoPalpiteiro = '';
+    this.senhaPalpiteiro = '';
+    await this.carregarPalpiteiros();
+  }
 
-      this.mensagem = '✅ Palpiteiro criado com sucesso!';
-      this.nome = '';
-      this.email = '';
-      this.senha = '';
-    } catch (e: any) {
-      console.error('Erro ao criar palpiteiro:', e);
-      this.mensagem = '❌ Erro ao criar palpiteiro. ' + (e.message || '');
+  async removerPalpiteiro(nome: string) {
+    if (confirm(`Deseja remover o palpiteiro "${nome}"?`)) {
+      await this.palpiteService.removerPalpiteiro(nome);
+      await this.carregarPalpiteiros();
     }
+  }
 
-    this.carregando = false;
+  async editarPalpiteiro(nome: string) {
+    const novoNome = prompt(`Novo nome para o palpiteiro "${nome}"`, nome);
+    if (novoNome && novoNome !== nome) {
+      await this.palpiteService.atualizarNomePalpiteiro(nome, novoNome);
+      await this.carregarPalpiteiros();
+    }
   }
 }

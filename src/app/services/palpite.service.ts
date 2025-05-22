@@ -8,7 +8,8 @@ import {
   deleteDoc,
   collection,
   query,
-  where
+  where,
+  updateDoc
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 
@@ -31,7 +32,11 @@ export class PalpiteService {
   async salvarPalpite(partidaId: string, nomePalpiteiro: string, palpite: any): Promise<void> {
     const uidGrupo = this.getUidGrupoOrThrow();
     const ref = doc(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}/palpites/${nomePalpiteiro}`);
-    await setDoc(ref, palpite, { merge: true });
+    const dadosComNomeExibicao = {
+      ...palpite,
+      nomeExibicao: this.auth.getUsuario() // Nome legível do palpiteiro
+    };
+    await setDoc(ref, dadosComNomeExibicao, { merge: true });
   }
 
   async atualizarRanking(nome: string, pontos: number, acertos: number): Promise<void> {
@@ -107,7 +112,6 @@ export class PalpiteService {
     }));
   }
 
-
   async getPartidasConferidas(): Promise<any[]> {
     const uidGrupo = this.getUidGrupoOrThrow();
     const partidasRef = collection(this.firestore, `grupos/${uidGrupo}/partidas`);
@@ -120,18 +124,11 @@ export class PalpiteService {
       const partidaId = docSnap.id;
       const partida = docSnap.data();
 
-      if (!partida) {
-        console.warn(`Partida ${partidaId} sem dados.`);
-        continue;
-      }
+      if (!partida) continue;
 
-      // Coleta de palpites
       const palpitesRef = collection(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}/palpites`);
       const palpitesSnap = await getDocs(palpitesRef);
-      const palpites = palpitesSnap.docs.map(p => ({
-        nome: p.id,
-        ...p.data()
-      }));
+      const palpites = palpitesSnap.docs.map(p => ({ nome: p.id, ...p.data() }));
 
       partidas.push({
         id: partidaId,
@@ -146,30 +143,43 @@ export class PalpiteService {
 
     return partidas;
   }
+
   async excluirPartida(partidaId: string): Promise<void> {
     const uidGrupo = this.getUidGrupoOrThrow();
-
-    // Exclui todos os palpites da subcoleção
     const palpitesRef = collection(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}/palpites`);
     const palpitesSnap = await getDocs(palpitesRef);
-
     for (const docPalpite of palpitesSnap.docs) {
       await deleteDoc(docPalpite.ref);
     }
-
-    // Exclui o documento da partida
     const partidaRef = doc(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}`);
     await deleteDoc(partidaRef);
   }
 
-  async adicionarMembroGrupo(nome: string, senha: string, admin: boolean = false): Promise<void>{
+  async adicionarMembroGrupo(nome: string, senha: string, admin: boolean = false): Promise<void> {
     const uidGrupo = this.getUidGrupoOrThrow();
     const ref = doc(this.firestore, `grupos/${uidGrupo}/membros/${nome}`);
-    await setDoc(ref, {
-      senha,
-      admin
-    });
+    await setDoc(ref, { senha, admin });
   }
+
+  async removerPalpiteiro(nome: string): Promise<void> {
+    const uidGrupo = this.getUidGrupoOrThrow();
+    const ref = doc(this.firestore, `grupos/${uidGrupo}/membros/${nome}`);
+    await deleteDoc(ref);
+  }
+
+  async atualizarNomePalpiteiro(nomeAntigo: string, novoNome: string): Promise<void> {
+    const uidGrupo = this.getUidGrupoOrThrow();
+    const membroRefAntigo = doc(this.firestore, `grupos/${uidGrupo}/membros/${nomeAntigo}`);
+    const membroRefNovo = doc(this.firestore, `grupos/${uidGrupo}/membros/${novoNome}`);
+    const docSnap = await getDoc(membroRefAntigo);
+
+    if (!docSnap.exists()) throw new Error('Palpiteiro não encontrado.');
+
+    const data = docSnap.data();
+    await setDoc(membroRefNovo, data);
+    await deleteDoc(membroRefAntigo);
+  }
+
   async getPartidasNaoVerificadas(): Promise<any[]> {
     const uidGrupo = this.getUidGrupoOrThrow();
     const partidasRef = collection(this.firestore, `grupos/${uidGrupo}/partidas`);
@@ -180,14 +190,9 @@ export class PalpiteService {
 
     for (const docSnap of snapshot.docs) {
       const partida = docSnap.data();
-
-      // Coleta os palpites existentes dessa partida
       const palpitesRef = collection(this.firestore, `grupos/${uidGrupo}/partidas/${docSnap.id}/palpites`);
       const palpitesSnap = await getDocs(palpitesRef);
-      const palpites = palpitesSnap.docs.map(p => ({
-        nome: p.id,
-        ...p.data()
-      }));
+      const palpites = palpitesSnap.docs.map(p => ({ nome: p.id, ...p.data() }));
 
       partidas.push({
         id: docSnap.id,
