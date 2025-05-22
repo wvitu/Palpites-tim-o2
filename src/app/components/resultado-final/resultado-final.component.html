@@ -1,27 +1,33 @@
-<section class="resultado-section">
-  <h2 class="section-title">Verificar o Resultado do Jogo</h2>
+<section class="w-full max-w-md mx-auto mt-6 bg-white/10 backdrop-blur-md p-6 rounded-2xl text-white shadow-md animate-fade-in">
+  <h2 class="text-xl font-semibold mb-4 text-center">Resultado da Partida</h2>
 
-  <!-- Dados da partida -->
-  <div class="partida-info">
-    <p><strong>Adversário:</strong> {{ adversario || 'Não informado' }}</p>
-    <p><strong>Data/Hora:</strong> {{ dataHora || 'Não informado' }}</p>
-    <p><strong>Local:</strong> {{ local || 'Não informado' }}</p>
-  </div>
+  <div class="space-y-4">
+    <!-- Info da Partida -->
+    <div class="text-sm text-center">
+      <div><strong>Adversário:</strong> {{ adversario }}</div>
+      <div class="text-white/80">{{ dataHora }} - {{ local }}</div>
+    </div>
 
-  <!-- Entrada dos resultados -->
-  <div class="resultado-input">
-    <input type="number" min="0" [(ngModel)]="resultadoCasa" placeholder="Gols Corinthians" />
-    <span>x</span>
-    <input type="number" min="0" [(ngModel)]="resultadoVisitante" placeholder="Gols Adversário" />
-  </div>
+    <!-- Inputs Resultado -->
+    <div class="flex items-center justify-center gap-2">
+      <input type="number" min="0" [(ngModel)]="resultadoCasa"
+             placeholder="Gols Corinthians"
+             class="w-20 text-center rounded-lg text-black px-2 py-1" />
+      <span class="text-white font-bold">x</span>
+      <input type="number" min="0" [(ngModel)]="resultadoVisitante"
+             placeholder="Gols {{ adversario }}"
+             class="w-20 text-center rounded-lg text-black px-2 py-1" />
+    </div>
 
-  <!-- Botão -->
-  <div class="resultado-btn">
-    <button (click)="verificarResultado()">Verificar Resultado do Jogo</button>
-  </div>
+    <!-- Botão de salvar -->
+    <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 mt-2 rounded-xl transition"
+            (click)="confirmarResultado()"
+            *ngIf="isAdmin">
+      Confirmar Resultado
+    </button>
 
-  <!-- Mensagens de acerto -->
-  <div *ngFor="let msg of mensagensAcerto" class="msg-sucesso">
-    {{ msg }}
+    <!-- Feedback -->
+    <p class="text-xs text-green-400 text-center" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</p>
+    <p class="text-xs text-red-400 text-center" *ngIf="mensagemErro">{{ mensagemErro }}</p>
   </div>
 </section>

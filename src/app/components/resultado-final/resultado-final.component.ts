@@ -14,12 +14,17 @@ export class ResultadoFinalComponent {
   @Input() adversario: string = '';
   @Input() dataHora: string = '';
   @Input() local: string = '';
-  @Output() pontuacoesAtualizadas = new EventEmitter<{ [nome: string]: number }>();
   @Input() isAdmin: boolean = false;
+  @Input() partidaId: string = ''; // necessário para salvar resultado no lugar correto
+
+  @Output() pontuacoesAtualizadas = new EventEmitter<{ [nome: string]: number }>();
 
   resultadoCasa: string = '';
   resultadoVisitante: string = '';
   mensagensAcerto: string[] = [];
+
+  mensagemSucesso: string = '';
+  mensagemErro: string = '';
 
   constructor(
     private palpiteService: PalpiteService,
@@ -27,22 +32,24 @@ export class ResultadoFinalComponent {
     private auth: AuthService
   ) {}
 
-  async verificarResultado() {
+  async confirmarResultado() {
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
     const casa = parseInt(this.resultadoCasa);
     const visitante = parseInt(this.resultadoVisitante);
 
     if (!this.isAdmin) {
-      alert('Apenas o administrador pode verificar o resultado.');
+      this.mensagemErro = 'Apenas o administrador pode confirmar o resultado.';
       return;
     }
 
     if (isNaN(casa) || isNaN(visitante)) {
-      alert('Preencha os dois campos do resultado com números.');
+      this.mensagemErro = 'Preencha os dois campos do resultado com números válidos.';
       return;
     }
 
     if (!this.adversario || !this.dataHora || !this.local) {
-      alert('Preencha os dados da partida (adversário, data e local).');
+      this.mensagemErro = 'Preencha os dados da partida (adversário, data e local).';
       return;
     }
 
@@ -52,38 +59,35 @@ export class ResultadoFinalComponent {
     for (const nome of this.palpiteiros) {
       let pontos = 0;
       let acertosIndividuais = 0;
-
       const palpite = this.palpites[nome];
       if (!palpite) continue;
 
       const { torcedor, realista } = palpite;
 
-      // Palpite Torcedor
       if (+torcedor.casa === casa) {
         pontos++; acertosIndividuais++;
-        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite torcedor).`);
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (torcedor).`);
       }
       if (+torcedor.visitante === visitante) {
         pontos++; acertosIndividuais++;
-        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite torcedor).`);
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (torcedor).`);
       }
       if (+torcedor.casa === casa && +torcedor.visitante === visitante) {
         pontos++; acertosIndividuais++;
-        this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite torcedor)!`);
+        this.mensagensAcerto.push(`+1 extra: ${nome} acertou o placar completo (torcedor)!`);
       }
 
-      // Palpite Realista
       if (+realista.casa === casa) {
         pontos++; acertosIndividuais++;
-        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (palpite realista).`);
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do Corinthians (realista).`);
       }
       if (+realista.visitante === visitante) {
         pontos++; acertosIndividuais++;
-        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (palpite realista).`);
+        this.mensagensAcerto.push(`+1 ponto: ${nome} acertou o placar do adversário (realista).`);
       }
       if (+realista.casa === casa && +realista.visitante === visitante) {
         pontos++; acertosIndividuais++;
-        this.mensagensAcerto.push(`+1 ponto extra: ${nome} acertou o placar completo (palpite realista)!`);
+        this.mensagensAcerto.push(`+1 extra: ${nome} acertou o placar completo (realista)!`);
       }
 
       if (pontos > 0) {
@@ -93,21 +97,19 @@ export class ResultadoFinalComponent {
     }
 
     if (Object.keys(acertos).length === 0) {
-      this.mensagensAcerto.push('Ninguém acertou desta vez.');
+      this.mensagensAcerto.push('Ninguém pontuou nesta rodada.');
     }
 
     this.pontuacoesAtualizadas.emit(acertos);
 
-    // 🔒 Salvar resultado da partida
-    const uidGrupo =this.auth.getGrupoId();
+    // 🔒 Salvar resultado final
+    const uidGrupo = this.auth.getGrupoId();
     if (!uidGrupo) {
-      console.error('Grupo não autenticado');
+      this.mensagemErro = 'Grupo não autenticado.';
       return;
     }
 
-    const partidaId = this.gerarIdPartida();
-    const partidaRef = doc(this.firestore, `grupos/${uidGrupo}/partidas/${partidaId}`);
-
+    const partidaRef = doc(this.firestore, `grupos/${uidGrupo}/partidas/${this.partidaId}`);
     await setDoc(partidaRef, {
       adversario: this.adversario,
       dataHora: this.dataHora,
@@ -115,12 +117,8 @@ export class ResultadoFinalComponent {
       resultadoCasa: casa,
       resultadoVisitante: visitante,
       verificado: true
-    });
+    }, { merge: true });
 
-    console.log('Partida salva com sucesso:', partidaId);
-  }
-
-  private gerarIdPartida(): string {
-    return `${this.dataHora}-${this.adversario}`.replace(/[^a-zA-Z0-9]/g, '_');
+    this.mensagemSucesso = 'Resultado confirmado e ranking atualizado!';
   }
 }
