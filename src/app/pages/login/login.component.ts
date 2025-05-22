@@ -32,7 +32,7 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router,
     public afAuth: Auth
-  ) {}
+  ) { }
 
   async autenticar() {
     this.erro = '';
@@ -52,10 +52,19 @@ export class LoginComponent {
         const ref = doc(this.firestore, `usuarios/${uid}`);
         await setDoc(ref, {
           email: this.email,
-          admin: true // padrão: não admin
+          nome: this.email,
+          grupoId: 'default',
+          admin: true
         });
 
-        this.authService.setUsuario(uid, this.email, 'default', false);
+
+        this.authService.setUsuario(uid, this.email, 'default', true);
+        await setDoc(doc(this.firestore, `usuarios/${cred.user.uid}`), {
+          nome: this.nome,
+          grupoId: 'default',
+          admin: true
+        });
+
         this.router.navigate(['/']);
       } else {
         console.log('🔑 Logando usuário...');
