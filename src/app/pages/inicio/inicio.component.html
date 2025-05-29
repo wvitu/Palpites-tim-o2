@@ -1,72 +1,77 @@
-<div class="container mx-auto px-4 pt-6 max-w-4xl">
-<div class="flex flex-col md:flex-row justify-center gap-4 my-6 animate-fade-in">
-  <button
-    *ngIf="authService.isAdminUser()"
-    (click)="iniciarRegistroPartida()"
-    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
-  >
-    Registrar Nova Partida
-  </button>
+<div class="min-h-screen flex flex-col bg-black bg-opacity-60">
+  <!-- Cabeçalho -->
+  <app-header></app-header>
 
-  <button
-    (click)="iniciarSelecaoPartidaExistente()"
-    class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
-  >
-    Consultar Partidas Futuras
-  </button>
-</div>
-
-<!-- Card para ADMIN criar nova partida -->
-<div *ngIf="registrandoNovaPartida && authService.isAdminUser()" class="animate-slide-in">
-  <app-match-info
-    (jogoAtualizado)="atualizarJogo($event)"
-    (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
-  </app-match-info>
-</div>
-
-<!-- Lista de partidas futuras -->
-<div *ngIf="selecionandoPartida" class="mt-6 animate-fade-in">
-  <h3 class="text-center text-xl font-bold mb-4">Partidas Disponíveis para Palpite</h3>
-
-  <div *ngIf="partidasFuturas.length === 0" class="text-center text-gray-500">
-    Nenhuma partida futura encontrada.
+  <!-- Botões -->
+  <div class="flex flex-col md:flex-row justify-center gap-4 my-6 animate-fade-in">
+    <button
+      *ngIf="authService.isAdminUser()"
+      (click)="iniciarRegistroPartida()"
+      class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
+    >
+      Registrar Nova Partida
+    </button>
+    <button
+      (click)="iniciarSelecaoPartidaExistente()"
+      class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
+    >
+      Consultar Partidas Futuras
+    </button>
   </div>
 
-  <ul *ngIf="partidasFuturas.length > 0" class="flex flex-col gap-4 items-center">
-    <li *ngFor="let partida of partidasFuturas" class="bg-white rounded-xl shadow-md px-6 py-4 w-full max-w-md text-center">
-      <p class="font-semibold">{{ partida.dataHora }}</p>
-      <p class="text-gray-700">{{ partida.adversario }} <span class="text-sm text-gray-500">({{ partida.local }})</span></p>
-      <button
-        (click)="selecionarPartida(partida)"
-        class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded-lg transition"
-      >
-        Selecionar Partida
-      </button>
-    </li>
-  </ul>
+  <!-- Registro de partida -->
+  <div *ngIf="registrandoNovaPartida && authService.isAdminUser()" class="animate-slide-in px-4">
+    <app-match-info
+      (jogoAtualizado)="atualizarJogo($event)"
+      (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
+    </app-match-info>
+  </div>
+
+  <!-- Lista de partidas futuras -->
+  <div *ngIf="selecionandoPartida" class="mt-6 animate-fade-in px-4">
+    <h3 class="text-center text-xl font-bold mb-4 text-white">Partidas Disponíveis para Palpite</h3>
+    <div *ngIf="partidasFuturas.length === 0" class="text-center text-gray-300">Nenhuma partida futura encontrada.</div>
+    <ul *ngIf="partidasFuturas.length > 0" class="flex flex-col gap-4 items-center">
+      <li *ngFor="let partida of partidasFuturas" class="bg-white rounded-xl shadow-md px-6 py-4 w-full max-w-md text-center">
+        <p class="font-semibold">{{ partida.dataHora }}</p>
+        <p class="text-gray-700">{{ partida.adversario }} <span class="text-sm text-gray-500">({{ partida.local }})</span></p>
+        <button
+          (click)="selecionarPartida(partida)"
+          class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1 rounded-lg transition"
+        >
+          Selecionar Partida
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Palpites -->
+  <app-palpites
+    [adversario]="adversario"
+    [dataHora]="dataHora"
+    [local]="local"
+    [palpiteiros]="palpiteiros"
+    [partidaId]="partidaId"
+    [palpitesPreCarregados]="palpitesRef"
+    (palpitesChange)="receberPalpites($event)">
+  </app-palpites>
+
+  <!-- Resultado final -->
+  <app-resultado-final
+    [palpites]="palpitesRef"
+    [palpiteiros]="palpiteiros"
+    [adversario]="adversario"
+    [dataHora]="dataHora"
+    [local]="local"
+    [isAdmin]="authService.isAdminUser()"
+    (pontuacoesAtualizadas)="atualizarPontuacao($event)">
+  </app-resultado-final>
+
+  <!-- Classificação -->
+  <app-classificacao [classificacao]="getClassificacao()"></app-classificacao>
+
+  <!-- Rodapé -->
+  <footer class="w-full text-center text-xs text-white py-3 bg-black bg-opacity-50 mt-auto">
+    Criado por <strong>Wanderson Vitor</strong> — todos os direitos reservados
+  </footer>
 </div>
-
-<!-- Palpites -->
-<app-palpites
-  [adversario]="adversario"
-  [dataHora]="dataHora"
-  [local]="local"
-  [palpiteiros]="palpiteiros"
-  [partidaId]="partidaId"
-  [palpitesPreCarregados]="palpitesRef"
-  (palpitesChange)="receberPalpites($event)">
-</app-palpites>
-
-<!-- Resultado final -->
-<app-resultado-final
-  [palpites]="palpitesRef"
-  [palpiteiros]="palpiteiros"
-  [adversario]="adversario"
-  [dataHora]="dataHora"
-  [local]="local"
-  [isAdmin]="authService.isAdminUser()"
-  (pontuacoesAtualizadas)="atualizarPontuacao($event)">
-</app-resultado-final>
-
-<!-- Classificação -->
-<app-classificacao [classificacao]="getClassificacao()"></app-classificacao></div>
