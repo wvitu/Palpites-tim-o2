@@ -1,9 +1,10 @@
 <section class="palpites-section text-white" *ngIf="palpiteiros.length">
   <h2 class="section-title text-center text-2xl font-semibold my-4">Palpites da Rodada</h2>
 
-  <div class="flex flex-wrap justify-center gap-6 px-4">
+  <!-- Cards em linha centralizados -->
+  <div class="flex justify-center flex-wrap gap-6 px-4">
     <div
-      class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-md p-5 text-white relative w-full max-w-md"
+      class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-md p-5 text-white relative w-96"
       *ngFor="let nome of palpiteiros"
     >
       <div class="absolute top-4 right-4 text-xs text-white/70">
@@ -22,6 +23,7 @@
         <div class="text-white/80 text-xs">{{ dataHora }} - {{ local }}</div>
       </div>
 
+      <!-- Palpite Torcedor -->
       <div class="mb-4">
         <label class="block text-sm mb-1">Palpite Torcedor</label>
         <div class="flex items-center gap-2">
@@ -50,6 +52,7 @@
         </div>
       </div>
 
+      <!-- Palpite Realista -->
       <div class="mb-4">
         <label class="block text-sm mb-1">Palpite Realista</label>
         <div class="flex items-center gap-2">
@@ -78,6 +81,7 @@
         </div>
       </div>
 
+      <!-- Botão de salvar -->
       <button
         class="w-full bg-blue-600 hover:bg-blue-700 text-white py-1.5 rounded-xl transition disabled:opacity-50"
         [disabled]="salvando[nome]"
@@ -86,6 +90,7 @@
         {{ salvando[nome] ? 'Salvando...' : 'Salvar Palpites' }}
       </button>
 
+      <!-- Mensagens -->
       <div *ngIf="mensagensErro[nome]" class="text-red-500 text-xs mt-2">
         {{ mensagensErro[nome] }}
       </div>
