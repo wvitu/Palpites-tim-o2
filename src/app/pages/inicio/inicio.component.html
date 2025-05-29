@@ -1,8 +1,6 @@
-<div class="min-h-screen flex flex-col bg-black bg-opacity-60">
-  <!-- Cabeçalho -->
-  <app-header></app-header>
+<div class="container mx-auto px-4 pt-6 max-w-5xl flex flex-col items-center">
 
-  <!-- Botões -->
+  <!-- Botões de ação -->
   <div class="flex flex-col md:flex-row justify-center gap-4 my-6 animate-fade-in">
     <button
       *ngIf="authService.isAdminUser()"
@@ -11,6 +9,7 @@
     >
       Registrar Nova Partida
     </button>
+
     <button
       (click)="iniciarSelecaoPartidaExistente()"
       class="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-300"
@@ -19,8 +18,8 @@
     </button>
   </div>
 
-  <!-- Registro de partida -->
-  <div *ngIf="registrandoNovaPartida && authService.isAdminUser()" class="animate-slide-in px-4">
+  <!-- Formulário de partida nova -->
+  <div *ngIf="registrandoNovaPartida && authService.isAdminUser()" class="w-full animate-slide-in">
     <app-match-info
       (jogoAtualizado)="atualizarJogo($event)"
       (adicionarPalpiteiro)="adicionarPalpiteiro($event)">
@@ -28,11 +27,15 @@
   </div>
 
   <!-- Lista de partidas futuras -->
-  <div *ngIf="selecionandoPartida" class="mt-6 animate-fade-in px-4">
-    <h3 class="text-center text-xl font-bold mb-4 text-white">Partidas Disponíveis para Palpite</h3>
-    <div *ngIf="partidasFuturas.length === 0" class="text-center text-gray-300">Nenhuma partida futura encontrada.</div>
+  <div *ngIf="selecionandoPartida" class="mt-6 animate-fade-in w-full max-w-lg">
+    <h3 class="text-center text-xl font-bold mb-4">Partidas Disponíveis para Palpite</h3>
+
+    <div *ngIf="partidasFuturas.length === 0" class="text-center text-gray-500">
+      Nenhuma partida futura encontrada.
+    </div>
+
     <ul *ngIf="partidasFuturas.length > 0" class="flex flex-col gap-4 items-center">
-      <li *ngFor="let partida of partidasFuturas" class="bg-white rounded-xl shadow-md px-6 py-4 w-full max-w-md text-center">
+      <li *ngFor="let partida of partidasFuturas" class="bg-white rounded-xl shadow-md px-6 py-4 w-full text-center">
         <p class="font-semibold">{{ partida.dataHora }}</p>
         <p class="text-gray-700">{{ partida.adversario }} <span class="text-sm text-gray-500">({{ partida.local }})</span></p>
         <button
@@ -45,7 +48,7 @@
     </ul>
   </div>
 
-  <!-- Palpites -->
+  <!-- Componente de palpites -->
   <app-palpites
     [adversario]="adversario"
     [dataHora]="dataHora"
@@ -69,9 +72,4 @@
 
   <!-- Classificação -->
   <app-classificacao [classificacao]="getClassificacao()"></app-classificacao>
-
-  <!-- Rodapé -->
-  <footer class="w-full text-center text-xs text-white py-3 bg-black bg-opacity-50 mt-auto">
-    Criado por <strong>Wanderson Vitor</strong> — todos os direitos reservados
-  </footer>
 </div>
